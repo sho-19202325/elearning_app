@@ -18,12 +18,15 @@ class Signup extends Component {
     onChangename(e, content) {
         this.setState({content: e.target.value})
     }
+
     onChangeemail(e) {
         this.setState({email: e.target.value})
     }
+
     onChangepassword(e) {
         this.setState({password: e.target.value})
     }
+
     onChangepassword_confirmation(e) {
         this.setState({password_confirmation: e.target.value})
     }
@@ -31,12 +34,6 @@ class Signup extends Component {
     registerUser = (name, email, password, password_confirmation) {
         axios.post('http://192.168.99.100:90/login',  {data: [name, email, password, password_confirmation]})
     }
-
-    hundleSubmit = () => {
-        this.props.
-        this.setState({name: '', email: '', password: '', password_confirmation: ''})
-    }
-
 
     render() { 
         return ( 

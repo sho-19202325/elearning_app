@@ -8,7 +8,7 @@ import NavBar from './NavBar';
 import Welcome from './Welcomepage';
 import './../../sass/welcome.scss';
 
- class Example extends Component {
+ class Index extends Component {
 
     render() {
         return (
@@ -41,6 +41,6 @@ import './../../sass/welcome.scss';
 
 export default Example;
 
-if (document.getElementById('example')) {
-    ReactDOM.render(<Example />, document.getElementById('example'));
+if (document.getElementById('index')) {
+    ReactDOM.render(<Index />, document.getElementById('index'));
 }

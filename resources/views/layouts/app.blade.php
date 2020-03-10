@@ -22,7 +22,7 @@
 </head>
 <body class="h-100">
     <main class="h-100">
-        <div id="example" class="h-100"></div>
+        <div id="index" class="h-100"></div>
         <script src={{ asset('js/app.js') }}></script>
     </main>
 </body>
