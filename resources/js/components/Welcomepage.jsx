@@ -10,16 +10,6 @@ class Welcome extends Component {
         return ( 
             <div className={"row h-100"}>
                 <Image src={Welcomebg} className={"h-100 col-md-12 no-padding"}/>
-                <Link to="/signup">
-                    <Button variant="danger" className={"welcome-btn"}>
-                        新規登録
-                    </Button>
-                </Link>                   
-                <Link to="/login">
-                    <Button variant="primary" className={"welcome-btn"}>
-                        ログイン
-                    </Button>
-                </Link>
             </div>                
          );
     }
