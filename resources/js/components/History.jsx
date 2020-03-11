@@ -9,7 +9,7 @@ class History extends Component {
         );        
 
         return ( 
-            <div className={"user-feed-container mx-auto text-center rounded shadow-lg"}>         
+            <div className={"card-container mx-auto text-center rounded shadow-lg"}>         
                 <h3 className={"my-3"}>Recently History</h3>
                 {historyChildren}
             </div>

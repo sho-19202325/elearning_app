@@ -17,7 +17,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
-import Button from 'react-bootstrap/Button';
+import { Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
 
@@ -95,15 +95,22 @@ function NavBarButton() {
     return (
       <div>
         <Link to="/signup">
-        <Button variant="danger" style={{ marginRight: 5}}>Sign up</Button>
+        <Button color="inherit" style={{ marginRight: 5}}>Sign up</Button>
         </Link>
         <Link to="/login">
-          <Button variant="primary">Login</Button>
+          <Button color="inherit">Login</Button>
         </Link> 
       </div>
     );
-  } else {
-    return <Button variant="secondary" onClick={logout}>Logout</Button>;
+} else {
+    return (
+      <div>
+        <Link to="/questions">
+          <Button color="inherit">Questions</Button>
+        </Link>      
+        <Button color="inherit" onClick={logout}>Logout</Button>       
+      </div>
+    );
   }
 }
 
