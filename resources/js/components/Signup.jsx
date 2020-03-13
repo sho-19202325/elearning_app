@@ -31,7 +31,7 @@ class Signup extends Component {
         this.setState({password_confirmation: e.target.value})
     }
 
-    registerUser = (name, email, password, password_confirmation) {
+    registerUser (name, email, password, password_confirmation) {
         axios.post('http://192.168.99.100:90/login',  {data: [name, email, password, password_confirmation]})
     }
 

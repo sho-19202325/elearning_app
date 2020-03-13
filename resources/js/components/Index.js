@@ -39,7 +39,7 @@ import './../../sass/welcome.scss';
     }
 }
 
-export default Example;
+export default Index;
 
 if (document.getElementById('index')) {
     ReactDOM.render(<Index />, document.getElementById('index'));
