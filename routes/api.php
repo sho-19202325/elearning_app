@@ -26,3 +26,5 @@ Route::middleware('auth:api')->post('/questionLists', 'Api\QuestionListControlle
 Route::middleware('auth:api')->patch('/questionList/{id}', 'Api\QuestionListController@update');
 
 Route::middleware('auth:api')->delete('/questionList/{id}', 'Api\QuestionListController@delete');
+
+Route::middleware('auth:api')->get('/users', 'Api\UserController@index');

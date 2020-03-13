@@ -11,6 +11,7 @@ import Home from './Home';
 import Questions from './Questions';
 import axios from 'axios';
 import IndexAdminQuestionLists from './adminQuestionLists/IndexAdminQuestionLists';
+import IndexUsers from './users/IndexUsers';
 
 function RenderHome() {
     if (localStorage.getItem('token') == ''){
@@ -93,6 +94,9 @@ function RenderHome() {
                             </Route>          
                             <Route path="/adminList">
                                 <IndexAdminQuestionLists questionLists={this.state.questionLists} />
+                            </Route>                  
+                            <Route path="/users">
+                                <IndexUsers />
                             </Route>                  
                             <Route path="/">
                                 <RenderHome />
