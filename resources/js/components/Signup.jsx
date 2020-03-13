@@ -58,19 +58,19 @@ class Signup extends Component {
     render() { 
         return ( 
             <Container className={'w-50 p-5 my-3 bg-light border rounded shadow-lg'}>
-                <h1 className={"text-center"}>新規登録</h1>
+                <h1 className={"text-center"}>Signup</h1>
                 <form action="/" onSubmit={e => this.handleSubmit(e)}>
                     <Row>
-                        <TextField required label="ユーザー名" className={"mx-auto my-3 col-md-7"} onChange={e => this.onChangename(e)}/>
+                        <TextField required label="name" className={"mx-auto my-3 col-md-7"} onChange={e => this.onChangename(e)}/>
                     </Row>
                     <Row>
-                        <TextField required label="メールアドレス" type="email" className={"mx-auto my-3 col-md-7"} onChange={e => this.onChangeEmail(e)}/>    
+                        <TextField required label="email" type="email" className={"mx-auto my-3 col-md-7"} onChange={e => this.onChangeEmail(e)}/>    
                     </Row>
                     <Row>
-                        <TextField required label="パスワード" id="password" type="password" className={"mx-auto my-3 col-md-7"}  onChange={e => this.onChangepassword(e)}/>    
+                        <TextField required label="password" id="password" type="password" className={"mx-auto my-3 col-md-7"}  onChange={e => this.onChangepassword(e)}/>    
                     </Row>
                     <Row>
-                        <TextField  required label="パスワード確認" id="password_confirmation" type="password" className={"mx-auto my-3 col-md-7"} onChange={e => this.onChangepassword_confirmation(e)} /> 
+                        <TextField  required label="password_confirmation" id="password_confirmation" type="password" className={"mx-auto my-3 col-md-7"} onChange={e => this.onChangepassword_confirmation(e)} /> 
                     </Row>        
                     <Row>
                         <Button type="submit" variant="danger" className="mx-auto mt-3">Sign Up!</Button>    

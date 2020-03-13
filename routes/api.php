@@ -18,3 +18,11 @@ Route::middleware('auth:api')->get('/user', 'Api\HomeController@index');
 Route::post('/user', 'Api\UserController@store');
 
 Route::post('/login', 'Api\AuthController@login');
+
+Route::middleware('auth:api')->get('/questionLists', 'Api\QuestionListController@index');
+
+Route::middleware('auth:api')->post('/questionLists', 'Api\QuestionListController@store');
+
+Route::middleware('auth:api')->patch('/questionList/{id}', 'Api\QuestionListController@update');
+
+Route::middleware('auth:api')->delete('/questionList/{id}', 'Api\QuestionListController@delete');
