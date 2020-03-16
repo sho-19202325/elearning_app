@@ -19,6 +19,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
+import Axios from 'axios';
 
 const drawerWidth = 240;
 
@@ -83,6 +84,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const logout = () => {
+  localStorage.setItem('token', '');
+  location.reload();
+  console.log('logout success');
+}
+
+function NavBarButton() {
+  if(localStorage.getItem('token') == ''){
+    return (
+      <div>
+        <Link to="/signup">
+        <Button variant="danger" style={{ marginRight: 5}}>Sign up</Button>
+        </Link>
+        <Link to="/login">
+          <Button variant="primary">Login</Button>
+        </Link> 
+      </div>
+    );
+  } else {
+    return <Button variant="secondary" onClick={logout}>Logout</Button>;
+  }
+}
+
+
 export default function NavBar() {
   const classes = useStyles();
   const theme = useTheme();
@@ -119,15 +144,11 @@ export default function NavBar() {
                     Super E-learning
                   </Link>  
                 </Typography>
-                  <Link to="/signup">
-                    <Button variant="danger" style={{ marginRight: 5}}>Sign up</Button>
-                  </Link>
-                  <Link to="/login">
-                    <Button variant="primary">Login</Button>
-                  </Link>          
+                <NavBarButton />      
             </Toolbar>
         </AppBar>
-      <Drawer
+        {/* I will fix list items after            */}
+        <Drawer
         className={classes.drawer}
         variant="persistent"
         anchor="left"
@@ -150,16 +171,8 @@ export default function NavBar() {
             </ListItem>
           ))}
         </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
       </Drawer>
+
     </div>
   );
 }
