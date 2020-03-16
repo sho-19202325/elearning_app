@@ -8,7 +8,7 @@ class Home extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            history: []
+            history: [],
         }
     }
 
@@ -19,7 +19,6 @@ class Home extends Component {
             history_data.push(`lesson # ${i} was finished`);
         };        
         this.setState({ history: history_data});
-        
     }
 
     render() { 

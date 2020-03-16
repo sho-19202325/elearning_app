@@ -30,4 +30,10 @@ class UserController extends Controller
 
         return ['token' => $token];
     }
+
+    public function show($id) {
+        $user = User::find($id);
+
+        return ['user' => $user];
+    }
 }

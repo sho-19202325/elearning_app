@@ -12,12 +12,51 @@ import Questions from './Questions';
 import axios from 'axios';
 import IndexAdminQuestionLists from './adminQuestionLists/IndexAdminQuestionLists';
 import IndexUsers from './users/IndexUsers';
+import Show from './users/Show';
 
-function RenderHome() {
-    if (localStorage.getItem('token') == ''){
-        return <Welcome />;
+function UnLoggedInUserPage() {
+    return (
+        <Switch>  
+            <Route path="/signup">
+                <Signup />
+            </Route>   
+            <Route path="/login">
+                <Login />
+            </Route>  
+            <Route path="/">
+                <Welcome />
+            </Route>
+        </Switch>
+    )
+}
+
+function LoggedInUserPage() {
+    
+    return (
+    <Switch>
+        <Route path="/questions">
+            <Questions />
+        </Route>          
+        <Route path="/adminList">
+            <IndexAdminQuestionLists questionLists={this.state.questionLists} />
+        </Route>                  
+        <Route path="/users">
+            <IndexUsers users={this.state.users} />
+        </Route>                  
+        <Route path="/user/:id" render={({ match })=> <Show users={this.state.users } user_id={match.params.id}/>} />                 
+        <Route exact path="/">
+            <Home user={this.state.user} />;
+        </Route>     
+    </Switch>        
+)}
+
+function RenderMainPage() {
+    if(localStorage.getItem('token') == "") {
+        return <UnLoggedInUserPage />;
+    } else if (this.state.user != null && this.state.users != null) {
+        return <LoggedInUserPage />;
     } else {
-        return <Home user={this.state.user}/>;
+        return <div></div>;
     }
 }
 
@@ -26,9 +65,11 @@ function RenderHome() {
  class Index extends Component {
     constructor(props) {
         super(props)
-        RenderHome = RenderHome.bind(this);
+        RenderMainPage = RenderMainPage.bind(this);
+        LoggedInUserPage = LoggedInUserPage.bind(this);
         this.state = {
-            user: {},
+            user: null,
+            users: null,
             questionLists: [],
         }
     }
@@ -36,21 +77,21 @@ function RenderHome() {
     componentDidMount() {
         // get user data from laravel api and set it to state
         if(localStorage.getItem('token')){
-            axios.get('api/user', {
+            axios.get('/api/user', {
                 headers: {
                     'Accept' : 'application/json',
                     'Authorization' : 'Bearer ' + localStorage.getItem('token'),
                 }
             })
             .then(response => {
-                console.log(response.data);
+                console.log("response: ", response.data);
                 this.setState({user: response.data});
             })
             .catch(error => {
                 console.log(error);
             }) 
 
-            axios.get('api/questionLists', {
+            axios.get('/api/questionLists', {
                 headers: {
                     'Accept' : 'application/json',
                     'Authorization' : 'Bearer ' + localStorage.getItem('token'),
@@ -66,45 +107,34 @@ function RenderHome() {
             })
             .catch(error => {
                 console.log(error);
-            })            
+            })         
+            
+            axios.get('/api/users', {
+                headers: {
+                    'Accept' : 'application/json',
+                    'Authorization' : 'Bearer ' + localStorage.getItem('token'),
+                }
+            })
+            .then(response => {
+                console.log(response);
+                this.setState({ users: response.data.users }); 
+            })
         }
-    }
-
-
+    }    
 
     render() {
-        
         return (
             <div className={ "h-100" }> 
-              <Router>
-                <header>
-                  <Header user={this.state.user} />
-                </header>
-                <div className={"main-container"}>
-                    <div className={"container-fluid h-100"}>
-                        <Switch>  
-                            <Route path="/signup">
-                                <Signup />
-                            </Route>   
-                            <Route path="/login">
-                                <Login />
-                            </Route>   
-                            <Route path="/questions">
-                                <Questions />
-                            </Route>          
-                            <Route path="/adminList">
-                                <IndexAdminQuestionLists questionLists={this.state.questionLists} />
-                            </Route>                  
-                            <Route path="/users">
-                                <IndexUsers />
-                            </Route>                  
-                            <Route path="/">
-                                <RenderHome />
-                            </Route>     
-                        </Switch>
+                <Router>
+                    <header>
+                    <Header user={this.state.user} />
+                    </header>
+                    <div className={"main-container"}>
+                        <div className={"container-fluid h-100"}>
+                            <RenderMainPage />
+                        </div>
                     </div>
-                </div>
-              </Router> 
+                </Router> 
             </div>
         );
     }

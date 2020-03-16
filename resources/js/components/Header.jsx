@@ -87,7 +87,7 @@ const useStyles = makeStyles(theme => ({
 
 function NavBarButton(props) {
 
-  if(localStorage.getItem('token') == ''){
+  if(this.props.user == null){
     return (
       <div>
         <Link to="/signup">
