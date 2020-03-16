@@ -8,7 +8,7 @@ import Header from './Header';
 import Welcome from './Welcomepage';
 import './../../sass/welcome.scss';
 import Home from './Home';
-import Questions from './Questions';
+import IndexQuestionLists from './questionLists/IndexQuestionLists';
 import axios from 'axios';
 import IndexAdminQuestionLists from './adminQuestionLists/IndexAdminQuestionLists';
 import IndexUsers from './users/IndexUsers';
@@ -31,11 +31,10 @@ function UnLoggedInUserPage() {
 }
 
 function LoggedInUserPage() {
-    
     return (
     <Switch>
         <Route path="/questions">
-            <Questions />
+            <QuestionLists questions={this.state.questionLists} />
         </Route>          
         <Route path="/adminList">
             <IndexAdminQuestionLists questionLists={this.state.questionLists} />
@@ -43,7 +42,7 @@ function LoggedInUserPage() {
         <Route path="/users">
             <IndexUsers users={this.state.users} />
         </Route>                  
-        <Route path="/user/:id" render={({ match })=> <Show users={this.state.users } user_id={match.params.id}/>} />                 
+        <Route path="/questionList/:id/questions" render={({ match }) => <IndexAdminQuestions quetsionLists={this.state.questionLists} questionList_id={match.params.id} />} />              
         <Route exact path="/">
             <Home user={this.state.user} />;
         </Route>     

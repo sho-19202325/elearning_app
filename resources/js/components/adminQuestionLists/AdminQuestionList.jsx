@@ -130,6 +130,9 @@ class AdminQuestionList extends Component {
                         <div className="col-md-8">
                             <h3>{this.state.title}</h3>
                             <p><span>[0 words]</span>{this.state.description}</p>
+                            <Button color="primary" variant="contained">
+                                show this list
+                            </Button>
                              
                         </div>  
                         <div className="col-md-4">
