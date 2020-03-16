@@ -18,7 +18,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('sass/common.scss') }}">
+    <link rel="stylesheet" href="{{ asset('css/common.css') }}">
 </head>
 <body class="h-100">
     <main class="h-100">

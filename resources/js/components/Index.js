@@ -7,6 +7,15 @@ import Login from './Login';
 import NavBar from './NavBar';
 import Welcome from './Welcomepage';
 import './../../sass/welcome.scss';
+import Home from './Home';
+
+function RenderHome() {
+    if (localStorage.getItem('token') == ''){
+        return <Welcome />;
+    } else {
+        return <Home />;
+    }
+}
 
  class Index extends Component {
 
@@ -27,8 +36,7 @@ import './../../sass/welcome.scss';
                             <Login />
                         </Route>   
                         <Route path="/">
-                            <Welcome />
-                            <h1>hello</h1>
+                            <RenderHome />
                         </Route>          
                         </Switch>
                     </div>
