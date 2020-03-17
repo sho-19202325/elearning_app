@@ -13,6 +13,7 @@ import axios from 'axios';
 import IndexAdminQuestionLists from './adminQuestionLists/IndexAdminQuestionLists';
 import IndexUsers from './users/IndexUsers';
 import Show from './users/Show';
+import AdminShowQuestionList from './adminQuestionLists/AdminShowQuestionList';
 
 function UnLoggedInUserPage() {
     return (
@@ -34,15 +35,16 @@ function LoggedInUserPage() {
     return (
     <Switch>
         <Route path="/questions">
-            <QuestionLists questions={this.state.questionLists} />
+            <IndexQuestionLists questions={this.state.questionLists} />
         </Route>          
         <Route path="/adminList">
             <IndexAdminQuestionLists questionLists={this.state.questionLists} />
         </Route>                  
         <Route path="/users">
             <IndexUsers users={this.state.users} />
-        </Route>                  
-        <Route path="/questionList/:id/questions" render={({ match }) => <IndexAdminQuestions quetsionLists={this.state.questionLists} questionList_id={match.params.id} />} />              
+        </Route>           
+        <Route path="/user/:id" render={({ match })=> <Show users={this.state.users } user_id={match.params.id}/>} />         
+        <Route path="/questionList/:id/questions" render={({ match }) => <AdminShowQuestionList quetsionLists={this.state.questionLists} questionList_id={match.params.id} />} />              
         <Route exact path="/">
             <Home user={this.state.user} />;
         </Route>     

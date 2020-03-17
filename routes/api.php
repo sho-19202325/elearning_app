@@ -34,3 +34,5 @@ Route::middleware('auth:api')->patch('/update', 'Api\HomeController@update');
 Route::middleware('auth:api')->post('/changeAvatar', 'Api\HomeController@changeAvatar');
 
 Route::middleware('auth:api')->get('/user/{id}', 'Api\UserController@show');
+
+Route::middleware('auth:api')->post('/questionList/{id}/questions', 'Api\QuestionController@store');

@@ -86,7 +86,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function NavBarButton(props) {
-
   if(this.props.user == null){
     return (
       <div>

@@ -11,7 +11,6 @@ function AddQuestionsList(props) {
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
 
-
     const handleOpen = () => {
       setOpen(true);
     };

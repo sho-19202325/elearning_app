@@ -3,10 +3,10 @@ import React, { Component } from 'react'
 class AdminQuestion extends Component {
     render() { 
         return ( 
-            <div className="card-container m-1 p-2 rounded shadow-lg text-center">
-                <h3>{this.props.question.statement}</h3>
-                <p>{this.props.quetsion.answer}</p>
-            </div>   
+            <tr className="card-container p-2 rounded shadow-lg text-center">
+                <td>{this.props.question.statement}</td>
+                <td>{this.props.question.answer}</td>
+            </tr>   
          );
     }
 }
