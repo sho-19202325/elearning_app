@@ -57,7 +57,7 @@ class Login extends Component {
 
     render() { 
         return ( 
-            <Container className={'w-50 p-5'}>
+            <Container className={'w-50 p-5 my-3 bg-light border rounded shadow-lg'}>
                 <h1 className={"text-center"}>ログイン</h1>
                 <form action="/" onSubmit={e => this.handleSubmit(e)}>
                     <Row>
