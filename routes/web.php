@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/{any}', function () {
     return view('layouts.app');
-});
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+})->where('any', '.*');
