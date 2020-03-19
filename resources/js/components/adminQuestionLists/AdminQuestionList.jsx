@@ -6,6 +6,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { TextField, Button } from '@material-ui/core';
 import CheckIcon from '@material-ui/icons/Check';
 import DeleteConfirmation from './DeleteConfirmation';
+import { authorizedAxios } from './../../modules/Rest';
 
 class AdminQuestionList extends Component {
     constructor(props) {
@@ -61,34 +62,13 @@ class AdminQuestionList extends Component {
     }
 
     updateQuestionList(id, title, description) {
-        axios.patch("/api/questionList/" + id, {title: title, description: description }, {
-            headers: {
-                'Accept' : 'application/json',
-                'Authorization' : 'Bearer ' + localStorage.getItem('token')
-            }
-        })
-        .then(response => {
-            console.log(response);
-        })
-        .catch(error => {
-            console.log(response);
-        })  
+        const data = {title: title, description: description}
+        authorizedAxios("patch", "/api/questionList/" + id, data);
     }
 
     deleteQuestionList(id) {
-        axios.delete('/api/questionList/' + id, {
-            headers: {
-                'Accept' : 'application/json',
-                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-            }
-        })
-        .then(response => {
-            console.log(response);
-            this.setState({isDeleted: true});
-        })
-        .catch(error => {
-            console.log(error);
-        })
+        authorizedAxios("delete", '/api/questionList/' + id);
+        this.setState({isDeleted: true})
     }
 
     render() { 

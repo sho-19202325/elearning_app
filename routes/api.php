@@ -13,26 +13,35 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', 'Api\HomeController@index');
-
 Route::post('/user', 'Api\UserController@store');
 
 Route::post('/login', 'Api\AuthController@login');
 
-Route::middleware('auth:api')->get('/questionLists', 'Api\QuestionListController@index');
+Route::group(['middleware' => 'auth:api'], function() {
 
-Route::middleware('auth:api')->post('/questionLists', 'Api\QuestionListController@store');
+    Route::get('/user', 'Api\HomeController@index');
 
-Route::middleware('auth:api')->patch('/questionList/{id}', 'Api\QuestionListController@update');
+    Route::patch('/update', 'Api\HomeController@update');
 
-Route::middleware('auth:api')->delete('/questionList/{id}', 'Api\QuestionListController@delete');
+    Route::post('/changeAvatar', 'Api\HomeController@changeAvatar');
 
-Route::middleware('auth:api')->get('/users', 'Api\UserController@index');
+    Route::get('/questionLists', 'Api\QuestionListController@index');
 
-Route::middleware('auth:api')->patch('/update', 'Api\HomeController@update');
+    Route::post('/questionLists', 'Api\QuestionListController@store');
 
-Route::middleware('auth:api')->post('/changeAvatar', 'Api\HomeController@changeAvatar');
+    Route::patch('/questionList/{id}', 'Api\QuestionListController@update');
 
-Route::middleware('auth:api')->get('/user/{id}', 'Api\UserController@show');
+    Route::delete('/questionList/{id}', 'Api\QuestionListController@delete');
 
-Route::middleware('auth:api')->post('/questionList/{id}/questions', 'Api\QuestionController@store');
+    Route::get('/users', 'Api\UserController@index');
+
+    Route::get('/user/{id}', 'Api\UserController@show');
+
+    Route::get('/questionList/questions', 'Api\QuestionController@index');
+
+    Route::post('/questionList/{id}/question', 'Api\QuestionController@store');
+
+    Route::patch('/questionList/{questionList_id}/question/{id}', 'Api\QuestionController@update');
+
+    Route::delete('/questionList/{questionList_id}/question/{id}', 'Api\QuestionController@delete');    
+});

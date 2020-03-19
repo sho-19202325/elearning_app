@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import AdminQuestions from './AdminQuestions';
+import AdmingQuestionChild from './AdminQuestionChild';
 import { IconButton, Button, TextField } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
@@ -7,31 +7,28 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
 import { Radio, FormControl, FormLabel, RadioGroup, FormControlLabel } from '@material-ui/core';
+import DeleteConfirmation from './DeleteConfirmation.jsx';
+import { authorizedAxios } from './../../modules/Rest';
+
+async function createQuestion(statement, answer) {
+    const data = {statement: statement, answer: answer};
+    const response = await authorizedAxios("post", '/api/questionList/' + this.props.questionList_id + '/question', data);
+    console.log(response);
+    this.handleNewQuestion(response.data.question);
+}
 
 function RenderQuestions(props) {
     const questions = [];
-    if(this.state.questions[0] !== undefined) {
-        for(let i=0;i<this.state.questions.length;i++){
+    console.log(props.showQuestions);
+    if(props.showQuestions !== undefined) {
+        for(let i=0;i<props.showQuestions.length;i++){
             questions.push(
-                <tr key={i} className="card-container p-2 rounded shadow-lg text-center">
-                    <td className="p-4">{this.state.questions[i].statement}</td>
-                    <td className="p-4">{this.state.questions[i].answer}</td>
-                    <td className="p-4">
-                        <IconButton color="inherit" variant="contained" >
-                            <EditIcon /> 
-                        </IconButton>
-                    </td>
-                    <td className="p-4">
-                        <IconButton color="inherit" variant="contained" >
-                            <DeleteIcon />
-                        </IconButton>
-                    </td>
-                </tr>                 
+                <AdmingQuestionChild key={i} question={props.showQuestions[i]} questionList_id={this.props.questionList_id} />              
             );
         }
     }
 
-    return <tbody>{questions}</tbody>;
+    return <div>{questions}</div>;
 }
 
 function AddQuestions(props) { 
@@ -53,30 +50,14 @@ function AddQuestions(props) {
 
     const handleAnswer = (e) => {
         setAnswer(e.target.value);
-        console.log(e.target.value);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         createQuestion(statement, answer);
-    }
-
-    const createQuestion = (statement, answer) => {
-        axios.post('/api/questionList/' + this.props.questionList_id + '/questions', {statement: statement, answer: answer}, {
-            headers: {
-                'Accept' : 'application/json',
-                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-            }
-        })
-        .then (response =>  {
-            console.log(response.data);
-            setStatement('');
-            setAnswer(1);
-            setOpen(false);
-        })
-        .catch (error => {
-            console.log(error);
-        })
+        setStatement('');
+        setAnswer(1);
+        handleClose();
     }
 
     if(open) {
@@ -119,41 +100,64 @@ function AddQuestions(props) {
     }
 }
 
+function RenderCreatedQuestions() {
+    let createdQuestions = []
+    for(let i=0;i < this.state.newQuestions.length;i++) {
+        if (this.state.newQuestions[i].question_list_id == this.props.questionList_id){
+            createdQuestions.unshift(
+                <AdmingQuestionChild key={i} question={this.state.newQuestions[i]} questionList_id={this.props.questionList_id} />  
+            )
+        }
+    }
+
+    return <div>{createdQuestions}</div>;
+}
+
 class AdminShowQuestionList extends Component {
     constructor(props) {
         super(props)
         RenderQuestions = RenderQuestions.bind(this);
         AddQuestions = AddQuestions.bind(this);
+        RenderCreatedQuestions = RenderCreatedQuestions.bind(this);
+        createQuestion = createQuestion.bind(this);
+        this.deleteQuestion = this.deleteQuestion.bind(this);
         this.state = {
-            questions: []
+            newQuestions: [],
         }
     }
 
-    componentDidMount() {
-        var question_data = [];
-        for(var i=1;i<=10;i++) {
-            question_data.push({id: i, statement: `this is question ${i}`, answer: `this is answer ${i}`});
-        };        
-        this.setState({ questions: question_data});
+    handleNewQuestion(newQuestion) {
+        let newQuestions = this.state.newQuestions;
+        newQuestions[newQuestions.length] = newQuestion;
+        this.setState({newQuestions: newQuestions});
+    }
+
+    deleteQuestion(id) {
+        authorizedAxios("delete", '/api/questionList/' + this.props.questionList_id + '/question/' + id);
     }
 
     render() { 
+        if(this.props.questions !== undefined){
+        const findQuestions = id => this.props.questions.filter(question => question.question_list_id == id);  
+        const showQuestions = findQuestions(this.props.questionList_id);
+        console.log(this.state.newQuestions);
         return ( 
-            <div className="container">
+            <div className="container w-75">
                 <AddQuestions />                
-                <table className="col-md-10 mx-auto mt-4">
-                    <thead className="w-100 card-container">
-                        <tr className="text-center">
-                            <th className="p-4 w-50">statement</th>
-                            <th className="p-4 w-50">answer</th>
-                            <th className="p-4 w-50">Edit</th>
-                            <th className="p-4 w-50">Delete</th>
-                        </tr>         
-                    </thead>
-                    <RenderQuestions />
-                </table> 
+                <div className="col-md-12 mt-4">
+                    <div className="card-container row text-center">
+                        <div className="p-4 col-md-3">statement</div>
+                        <div className="p-4 col-md-3">answer</div>
+                        <div className="p-4 col-md-3">Edit</div>
+                        <div className="p-4 col-md-3">Delete</div>
+                    </div>
+                    <RenderCreatedQuestions />
+                    <RenderQuestions showQuestions={showQuestions} />
+                </div> 
             </div>
-         );
+         );} else {
+             return <div></div>;
+         }
     }
 }
  

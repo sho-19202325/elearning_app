@@ -3,6 +3,7 @@ import Switch from '@material-ui/core/Switch';
 import EditIcon from '@material-ui/icons/Edit';
 import FlipCameraIosIcon from '@material-ui/icons/FlipCameraIos';
 import UserEdit from './users/UserEdit';
+import { authorizedAxios } from './../modules/Rest';
 
 function ChangeAvatarButton() {
     const buttonStyle = {
@@ -65,38 +66,18 @@ class UserProfile extends Component {
         this.updateUser(this.state.name, this.state.email);
     }
 
-    updateUser(name, email) {
-        axios.patch('/api/update', {name: name, email: email}, {
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            }
-        })
-        .then(response => {
-            console.log(response)
-            this.setState({name: response.data.user.name, email: response.data.user.email})
-            })
-        .catch(error => {
-            console.log(response)
-            })
+    async updateUser(name, email) {
+        const data = { name: name, email: email }
+        const response = await authorizedAxios("patch", '/api/update', data);
+        this.setState({ name: response.data.user.name, email: response.data.user.email })
     }
 
-    sendFile(e) {   
+    async sendFile(e) {   
         e.preventDefault();
         const formData = new FormData();
         formData.append('avatar', e.target.files[0]);
-        axios.post('/api/changeAvatar', formData, {
-            headers: {
-                'Content-type': 'multipart/form-data',
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            }
-        })
-        .then(response => {
-            this.handleAvatar(response.data.user.avatar);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
+        const response = await authorizedAxios("post", '/api/changeAvatar', formData);
+        this.handleAvatar(response.data.user.avatar);
     }
 
     render() { 

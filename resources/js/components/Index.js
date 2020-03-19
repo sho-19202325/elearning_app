@@ -14,6 +14,7 @@ import IndexAdminQuestionLists from './adminQuestionLists/IndexAdminQuestionList
 import IndexUsers from './users/IndexUsers';
 import Show from './users/Show';
 import AdminShowQuestionList from './adminQuestionLists/AdminShowQuestionList';
+import { authorizedAxios } from './../modules/Rest';
 
 function UnLoggedInUserPage() {
     return (
@@ -44,7 +45,7 @@ function LoggedInUserPage() {
             <IndexUsers users={this.state.users} />
         </Route>           
         <Route path="/user/:id" render={({ match })=> <Show users={this.state.users } user_id={match.params.id}/>} />         
-        <Route path="/questionList/:id/questions" render={({ match }) => <AdminShowQuestionList quetsionLists={this.state.questionLists} questionList_id={match.params.id} />} />              
+        <Route path="/questionList/:id/questions" render={({ match }) => <AdminShowQuestionList quetsionLists={this.state.questionLists} questionList_id={match.params.id} questions={this.state.questions} />} />              
         <Route exact path="/">
             <Home user={this.state.user} />;
         </Route>     
@@ -61,13 +62,12 @@ function RenderMainPage() {
     }
 }
 
-
-
  class Index extends Component {
     constructor(props) {
         super(props)
         RenderMainPage = RenderMainPage.bind(this);
         LoggedInUserPage = LoggedInUserPage.bind(this);
+        this.setInformation = this.setInformation.bind(this);
         this.state = {
             user: null,
             users: null,
@@ -78,50 +78,23 @@ function RenderMainPage() {
     componentDidMount() {
         // get user data from laravel api and set it to state
         if(localStorage.getItem('token')){
-            axios.get('/api/user', {
-                headers: {
-                    'Accept' : 'application/json',
-                    'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                }
-            })
-            .then(response => {
-                console.log("response: ", response.data);
-                this.setState({user: response.data});
-            })
-            .catch(error => {
-                console.log(error);
-            }) 
-
-            axios.get('/api/questionLists', {
-                headers: {
-                    'Accept' : 'application/json',
-                    'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                }
-            })
-            .then(response => {
-                console.log(response.data.questionLists);
-                let questionLists = response.data.questionLists;
-                questionLists = questionLists.sort(function(a, b) {
-                   return (a.id > b.id) ? -1 : 1;
-               });   
-                this.setState({ questionLists: questionLists });           
-            })
-            .catch(error => {
-                console.log(error);
-            })         
-            
-            axios.get('/api/users', {
-                headers: {
-                    'Accept' : 'application/json',
-                    'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                }
-            })
-            .then(response => {
-                console.log(response);
-                this.setState({ users: response.data.users }); 
-            })
+            this.setInformation();       
         }
     }    
+
+    async setInformation() {
+            let response = await authorizedAxios("get", '/api/user/');
+            this.setState({ user: response.data});
+
+            response = await authorizedAxios("get", '/api/questionLists');
+            this.setState({ questionLists: response.data.questionLists});
+
+            response = await authorizedAxios("get", '/api/users/');
+            this.setState({ users: response.data.users });
+
+            response = await authorizedAxios("get", '/api/questionList/questions');
+            this.setState({ questions: response.data.questions });         
+    }
 
     render() {
         return (

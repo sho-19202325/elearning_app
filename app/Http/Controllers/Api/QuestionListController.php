@@ -10,7 +10,7 @@ class QuestionListController extends Controller
 {
     public function index() 
     {
-        $questionLists = QuestionList::all();
+        $questionLists = QuestionList::orderBy('created_at', 'DESC')->get();
 
         return ['questionLists' => $questionLists];
     }
