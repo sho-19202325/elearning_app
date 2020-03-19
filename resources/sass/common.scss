@@ -18,3 +18,15 @@ body {
 .main-container {
     padding-top: 64px !important;
 }
+
+a {
+    color: inherit !important;
+}
+
+.card-container {
+    border: 3px solid #bd5109;
+    background-color: #FFA500;
+    color: #bd5109;
+    font-weight: bold;
+    text-shadow: 2px 2px lightgray;
+}

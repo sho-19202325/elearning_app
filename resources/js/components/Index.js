@@ -8,6 +8,7 @@ import NavBar from './NavBar';
 import Welcome from './Welcomepage';
 import './../../sass/welcome.scss';
 import Home from './Home';
+import Questions from './Questions';
 
 function RenderHome() {
     if (localStorage.getItem('token') == ''){
@@ -29,15 +30,18 @@ function RenderHome() {
                 <div className={"main-container"}>
                     <div className={"container-fluid h-100 no-padding"}>
                         <Switch>  
-                        <Route path="/signup">
-                            <Signup />
-                        </Route>   
-                        <Route path="/login">
-                            <Login />
-                        </Route>   
-                        <Route path="/">
-                            <RenderHome />
-                        </Route>          
+                            <Route path="/signup">
+                                <Signup />
+                            </Route>   
+                            <Route path="/login">
+                                <Login />
+                            </Route>   
+                            <Route path="/questions">
+                                <Questions />
+                            </Route>                            
+                            <Route path="/">
+                                <RenderHome />
+                            </Route>     
                         </Switch>
                     </div>
                 </div>

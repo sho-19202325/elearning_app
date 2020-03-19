@@ -45,7 +45,7 @@ class Home extends Component {
                     <div className="col-md-6">
                         <UserProfile user={this.state.user} />
                         <div className="container">
-                            <div className={"lesson-count-container col-md-8 text-center"}>
+                            <div className={"card-container col-md-8 text-center"}>
                                 <h3>learned</h3>
                                 <div>13 words</div>
                             </div>                            
