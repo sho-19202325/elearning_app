@@ -8,7 +8,11 @@ class Question extends Model
 {
     protected $guarded = ['id'];
 
-    public function questionLists() {
+    public function questionList() {
         return $this->belongsTo('App\Question');
+    }
+
+    public function options() {
+        return $this->hasMany('App\Option');
     }
 }

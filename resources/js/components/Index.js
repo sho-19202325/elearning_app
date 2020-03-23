@@ -45,7 +45,7 @@ function LoggedInUserPage() {
             <IndexUsers users={this.state.users} />
         </Route>           
         <Route path="/user/:id" render={({ match })=> <Show users={this.state.users } user_id={match.params.id}/>} />         
-        <Route path="/questionList/:id/questions" render={({ match }) => <AdminShowQuestionList quetsionLists={this.state.questionLists} questionList_id={match.params.id} questions={this.state.questions} />} />              
+        <Route path="/admin/questionList/:id/questions" render={({ match }) => <AdminShowQuestionList quetsionLists={this.state.questionLists} questionList_id={match.params.id} questions={this.state.questions} />} />              
         <Route exact path="/">
             <Home user={this.state.user} />;
         </Route>     
@@ -72,6 +72,7 @@ function RenderMainPage() {
             user: null,
             users: null,
             questionLists: [],
+            questions: [],
         }
     }
 
@@ -93,7 +94,7 @@ function RenderMainPage() {
             this.setState({ users: response.data.users });
 
             response = await authorizedAxios("get", '/api/questionList/questions');
-            this.setState({ questions: response.data.questions });         
+            this.setState({ questions: response.data.questions }); 
     }
 
     render() {
