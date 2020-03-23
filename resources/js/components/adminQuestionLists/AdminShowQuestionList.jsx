@@ -29,7 +29,7 @@ async function createOption(questionList_id, question_id) {
 
 function RenderQuestions(props) {
     const questions = [];
-    if(props.showQuestions !== undefined && this.state.options != undefined && this.state.options[0] != undefined) {
+    if(props.showQuestions !== undefined && props.options != undefined && props.options[0] != undefined) {
         for(let i=0;i<props.showQuestions.length;i++){
             let question = props.showQuestions[i];  
             let options = props.options.filter(option => option.question_id == question.id);

@@ -50,4 +50,12 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/options', 'Api\OptionController@index');
 
     Route::patch('/question/{question_id}/options', 'Api\OptionController@update');
+
+    Route::get('/lessons', 'Api\LessonController@index');
+
+    Route::post('/lesson', 'Api\LessonController@store');
+
+    Route::get('/answers', 'Api\AnswerController@index');
+
+    Route::post('/answers', 'Api\AnswerController@store');
 });

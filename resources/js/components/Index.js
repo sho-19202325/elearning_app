@@ -36,7 +36,7 @@ function LoggedInUserPage() {
     return (
     <Switch>
         <Route path="/questions">
-            <IndexQuestionLists questions={this.state.questionLists} />
+            <IndexQuestionLists questionLists={this.state.questionLists} />
         </Route>          
         <Route path="/adminList">
             <IndexAdminQuestionLists questionLists={this.state.questionLists} />
@@ -82,6 +82,8 @@ function RenderMainPage() {
         }
     }
 
+    
+
     componentDidMount() {
         // get user data from laravel api and set it to state
         if(localStorage.getItem('token')){
@@ -103,7 +105,7 @@ function RenderMainPage() {
             this.setState({ questions: response.data.questions }); 
 
             response = await authorizedAxios("get", '/api/options' );
-            this.setState({ options: response.data.options });        
+            this.setState({ options: response.data.options });  
     }
 
     render() {
