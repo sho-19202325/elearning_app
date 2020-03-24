@@ -15,6 +15,7 @@ import IndexUsers from './users/IndexUsers';
 import Show from './users/Show';
 import AdminShowQuestionList from './adminQuestionLists/AdminShowQuestionList';
 import { authorizedAxios } from './../modules/Rest';
+import AnswerQuestions from './questionLists/AnswerQuestions';
 
 function UnLoggedInUserPage() {
     return (
@@ -36,7 +37,12 @@ function LoggedInUserPage() {
     return (
     <Switch>
         <Route path="/questions">
-            <IndexQuestionLists questionLists={this.state.questionLists} />
+            <IndexQuestionLists 
+                handleChange={this.handleChange}
+                questionLists={this.state.questionLists} 
+                lessons={this.state.lessons}
+                answers={this.state.answers}
+            />
         </Route>          
         <Route path="/adminList">
             <IndexAdminQuestionLists questionLists={this.state.questionLists} />
@@ -47,11 +53,22 @@ function LoggedInUserPage() {
         <Route path="/user/:id" render={({ match })=> <Show users={this.state.users } user_id={match.params.id}/>} />         
         <Route path="/admin/questionList/:id/questions" render={({ match }) => 
             <AdminShowQuestionList 
-                quetsionLists={this.state.questionLists} 
+                questionLists={this.state.questionLists} 
                 questionList_id={match.params.id} 
                 questions={this.state.questions} 
                 options={this.state.options}
-                />} />              
+                />} />    
+        <Route path="/questionList/:questionList_id/questions" render={({ match }) =>
+            <AnswerQuestions 
+                user={this.state.user}
+                questionLists={this.state.questionLists}
+                questionList_id={match.params.questionList_id}
+                questions={this.state.questions}
+                options={this.state.options}
+                lessons={this.state.lessons}
+                answers={this.state.answers}
+                handleChange={this.handleChange}
+                />  } />
         <Route exact path="/">
             <Home user={this.state.user} />;
         </Route>     
@@ -74,11 +91,15 @@ function RenderMainPage() {
         RenderMainPage = RenderMainPage.bind(this);
         LoggedInUserPage = LoggedInUserPage.bind(this);
         this.setInformation = this.setInformation.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.state = {
             user: null,
             users: null,
             questionLists: [],
             questions: [],
+            options: [],
+            lessons: [],
+            answers: [],
         }
     }
 
@@ -106,6 +127,16 @@ function RenderMainPage() {
 
             response = await authorizedAxios("get", '/api/options' );
             this.setState({ options: response.data.options });  
+
+            response = await authorizedAxios("get", '/api/lessons');
+            this.setState({ lessons: response.data.lessons });
+
+            // response = await authorizedAxios("get", '/api/answers');
+            // this.setState({ answers: response.data.answers });
+    }
+
+    handleChange(name, value) {
+        this.setState({[name]: value});
     }
 
     render() {

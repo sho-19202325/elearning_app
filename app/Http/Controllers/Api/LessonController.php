@@ -16,8 +16,8 @@ class LessonController extends Controller
     public function store(Request $request) {
         $user = $request->user();
 
-        $lesson = $user->lessons([
-            'questionList_id' => $request->questionList_id,
+        $lesson = $user->lessons()->create([
+            'question_list_id' => $request->questionList_id,
         ]);
 
         return ['lesson' => $lesson];

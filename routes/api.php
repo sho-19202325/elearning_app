@@ -57,5 +57,5 @@ Route::group(['middleware' => 'auth:api'], function() {
 
     Route::get('/answers', 'Api\AnswerController@index');
 
-    Route::post('/answers', 'Api\AnswerController@store');
+    Route::post('/lesson/{lesson_id}/answer', 'Api\AnswerController@store');
 });

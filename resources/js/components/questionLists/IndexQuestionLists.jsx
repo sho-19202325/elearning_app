@@ -2,39 +2,35 @@ import React, { Component } from 'react';
 import QuestionList from './QuestionList';
 import { authorizedAxios } from './../../modules/Rest';
 
+async function createLesson(questionList_id) {
+    const response = await authorizedAxios("post", '/api/lesson/', {questionList_id: questionList_id});
+    let lessons = this.state.lessons;
+    lessons[this.state.lessons.length] = response.data.lesson;
+    this.props.handleChange("lessons", lessons);
+}
+
+async function createAnswer(lesson_id, question_id, choice) {
+    const data = {lesson_id: lesson_id, question_id: question_id, choice: choice}
+    const response = await authorizedAxios("post", '/api/answer/', data);
+    let answers = this.state.answers;
+    answers[this.state.answers.length] = response.data.answer;
+    this.props.handleChange("answers", answers)
+}
+
 class IndexQuestionLists extends Component {
     constructor(props) {
-        super(props) 
+        super(props)
+        createLesson = createLesson.bind(this);
+        createAnswer = createAnswer.bind(this);
         this.state = {
             lessons: [],
             answers: [],
         }
-    }
+    }  
 
-    componentDidMount() {
-        this.setInfomations();    
-    }
-
-    async setInfomations() {
-        let response = authorizedAxios("get", '/api/lessons');
-        this.setState({ lessons: response.data.lessons });
-        response = authorizedAxios("get", '/api/answers');
-        this.setState({ answer: response.data.lessons });
-    }
-
-    async createLesson(questionList_id) {
-        const response = await authorizedAxios("post", '/api/lesson/', {questionList_id: questionList_id});
-        let lessons = this.state.lessons;
-        lessons[this.state.lessons.length] = response.data.lesson;
-        this.setState({lessons: lessons});
-    }
-
-    async createAnswer(lesson_id, question_id, choice) {
-        const data = {lesson_id: lesson_id, question_id: question_id, choice: choice}
-        const response = await authorizedAxios("post", '/api/answer/', data);
-        let answers = this.state.answers;
-        answers[this.state.answers.length] = response.data.answer;
-        this.setState({answers: answers});
+    handleSubmit(e, questionList_id) {
+        e.preventDefault();
+        createLesson(questionList_id);
     }
 
     render() { 
@@ -42,8 +38,8 @@ class IndexQuestionLists extends Component {
             <div className="col-md-6" key={index}>
                 <QuestionList 
                     questionList={questionList} 
-                    createLesson={this.props.createLesson}
-                    createAnswer={this.props.createAnswer}
+                    handleSubmit={this.handleSubmit}
+                    createAnswer={createAnswer}
                 />                
             </div>
         );     

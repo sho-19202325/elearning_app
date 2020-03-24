@@ -34,10 +34,6 @@ class Login extends Component {
         this.setState({email: '', password: ''});
     }
 
-    checktoken() {
-        console.log(localStorage.getItem('token') == '');
-    }
-
     login(email, password) {
         axios.post('/api/login', {email: email, password: password},
         {
