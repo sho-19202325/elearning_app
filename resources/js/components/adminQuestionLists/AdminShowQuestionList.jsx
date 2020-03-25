@@ -14,11 +14,14 @@ async function createQuestion(questionList_id, statement, answer) {
     const data = {statement: statement, answer: answer};
     const response = await authorizedAxios("post", '/api/questionList/' + questionList_id + '/question', data);
     console.log(response);
+    createOption(questionList_id, response.data.question.id);    
     this.handleNewQuestion(response.data.question);
-    createOption(questionList_id, response.data.question.id);
 }
 
 async function createOption(questionList_id, question_id) {
+    console.log('inside create option')
+    console.log(this.state)    
+    console.log('inside create option end')
     const data = {options:[this.state.content1, this.state.content2, this.state.content3]};
     const response = await authorizedAxios("post", '/api/question/' + question_id + '/option', data);
     this.handleNewOption(response.data.options);

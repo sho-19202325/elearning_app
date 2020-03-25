@@ -35,9 +35,9 @@ class AdminQuestionChild extends Component {
             previousAnswer: "",
             isExpanded: false,
             options: this.props.options,
-            option1: this.props.options[0].content,
-            option2: this.props.options[1].content,
-            option3: this.props.options[2].content,
+            option1: "",
+            option2: "",
+            option3: "",
         }
     }
 
@@ -107,6 +107,15 @@ class AdminQuestionChild extends Component {
     deleteQuestion(id) {
         authorizedAxios("delete", '/api/questionList/' + this.props.questionList_id + '/question/' + id);
         this.setState({ isDeleted: true });
+    }
+
+    componentDidMount() {
+        if(this.state.options[0] != undefined){
+        this.setState({
+            option1: this.props.options[0].content,
+            option2: this.props.options[1].content,
+            option3: this.props.options[2].content,
+        })}
     }
 
     render() { 

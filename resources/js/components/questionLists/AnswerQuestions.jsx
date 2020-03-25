@@ -2,13 +2,7 @@ import React, { Component } from 'react';
 import { Button } from '@material-ui/core';
 import CurrentQuestion from './CurrentQuestion';
 import { authorizedAxios } from './../../modules/Rest';
-
-async function createLesson(questionList_id) {
-    const response = await authorizedAxios("post", '/api/lesson/', {questionList_id: questionList_id});
-    let lessons = this.props.lessons;
-    lessons[this.props.lessons.length] = response.data.lesson;
-    this.props.handleChange("lessons", lessons);
-}
+import ResultList from './ResultList';
 
 async function createAnswer(lesson_id, question_id, choice) {
     const data = {question_id: question_id, choice: choice}
@@ -22,7 +16,14 @@ class AnswerQuestions extends Component {
     constructor(props) {
         super(props);
         createAnswer = createAnswer.bind(this);
-        createLesson = createLesson.bind(this);
+        this.handleCurrentQuestionNumber = this.handleCurrentQuestionNumber.bind(this);
+        this.state = {
+            currentQuestionNumber: 1,
+        }
+    }
+
+    handleCurrentQuestionNumber() {
+        this.setState({ currentQuestionNumber: this.state.currentQuestionNumber + 1 });
     }
 
     render() { 
@@ -32,17 +33,29 @@ class AnswerQuestions extends Component {
         const questions = findQuestions(this.props.questionList_id);
         const findLesson = (user_id, questionList_id) => 
         this.props.lessons.find(
-            lesson => lesson.user_id == user_id && lesson.question_list_id == questionList_id 
+            lesson => lesson.id == this.props.lesson_id 
         );
         const lesson = findLesson(this.props.user.id, this.props.questionList_id);
+        const answers = this.props.answers.filter(answer => answer.lesson_id == this.props.lesson_id);
 
-        if(questions[0] != undefined){
+        if(questions[0] != undefined && answers.length == questions.length){
+           return (
+           <ResultList
+                questionList={questionList} 
+                questions={questions}
+                answers={answers}
+                options={this.props.options}
+           />
+           )
+        } else if (questions[answers.length] != undefined && lesson != undefined){
+            console.log(questions)
             return ( 
                 <div className="container card-container my-5 p-5 w-50">
                     <CurrentQuestion 
                         questionList={questionList}
-                        question={questions[0]}
+                        question={questions[answers.length]}
                         questions_number={questions.length}
+                        currentQuestionNumber={answers.length+1}
                         options={this.props.options}
                         lesson={lesson}
                         createAnswer={createAnswer}

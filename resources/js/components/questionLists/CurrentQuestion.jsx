@@ -13,14 +13,14 @@ class CurrentQuestion extends Component {
     }
 
     render() { 
-        console.log(this.props);
         const findOptions = id => this.props.options.filter(option => option.question_id == id);
         const options = findOptions(this.props.question.id); 
+
         if(options[0] != undefined) {
             return ( 
                 <div>
-                    <p>{this.props.questionList.title} {this.props.question.id}/{this.props.questions_number}</p>
-                    <h3 className="bg-light p-5 my-3">Q{this.props.question.id}, {this.props.question.statement}</h3>
+                    <p>{this.props.questionList.title} {this.props.currentQuestionNumber}/{this.props.questions_number}</p>
+                    <h3 className="bg-light p-5 my-3">Q{this.props.currentQuestionNumber}, {this.props.question.statement}</h3>
                     <div className="row">
                         <Button color="primary" variant="contained" className="col-md-8 mx-auto" onClick={(e) => this.handleAnswer(e, 1)}>1: {options[0].content}</Button>                    
                     </div>

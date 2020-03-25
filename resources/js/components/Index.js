@@ -39,7 +39,9 @@ function LoggedInUserPage() {
         <Route path="/questions">
             <IndexQuestionLists 
                 handleChange={this.handleChange}
-                questionLists={this.state.questionLists} 
+                user={this.state.user}
+                questionLists={this.state.questionLists}
+                questions={this.state.questions} 
                 lessons={this.state.lessons}
                 answers={this.state.answers}
             />
@@ -58,7 +60,7 @@ function LoggedInUserPage() {
                 questions={this.state.questions} 
                 options={this.state.options}
                 />} />    
-        <Route path="/questionList/:questionList_id/questions" render={({ match }) =>
+        <Route path="/lesson/:lesson_id/questionList/:questionList_id" render={({ match }) =>
             <AnswerQuestions 
                 user={this.state.user}
                 questionLists={this.state.questionLists}
@@ -66,6 +68,7 @@ function LoggedInUserPage() {
                 questions={this.state.questions}
                 options={this.state.options}
                 lessons={this.state.lessons}
+                lesson_id={match.params.lesson_id}
                 answers={this.state.answers}
                 handleChange={this.handleChange}
                 />  } />
@@ -106,7 +109,6 @@ function RenderMainPage() {
     
 
     componentDidMount() {
-        // get user data from laravel api and set it to state
         if(localStorage.getItem('token')){
             this.setInformation();       
         }
@@ -131,8 +133,8 @@ function RenderMainPage() {
             response = await authorizedAxios("get", '/api/lessons');
             this.setState({ lessons: response.data.lessons });
 
-            // response = await authorizedAxios("get", '/api/answers');
-            // this.setState({ answers: response.data.answers });
+            response = await authorizedAxios("get", '/api/answers');
+            this.setState({ answers: response.data.answers });
     }
 
     handleChange(name, value) {

@@ -10,19 +10,14 @@ class AnswerController extends Controller
 {
     public function index(Request $request) 
     {
-        $lessons = $request->user()->lessons;
-        $answer = [];
-        foreach($lessons as $lesson) {
-            array_push($answer, [$lesson->answers]);
-        }
+        $answers = Answer::all();
 
-        return ['answer' => $answer];
+        return ['answers' => $answers];
     }
 
-    public function store(Request $request) {
-        return $request;
-        $lesson = $request->user()->lessons()->find($request->lesson_id);
-        $answer = $lesson->answer()->create([
+    public function store(Request $request, $lesson_id) {
+        $lesson = $request->user()->lessons()->find($lesson_id);
+        $answer = $lesson->answers()->create([
             'question_id' => $request->question_id,
             'choice' => $request->choice,
         ]);
