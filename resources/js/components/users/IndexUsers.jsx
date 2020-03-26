@@ -19,26 +19,6 @@ class IndexUsers extends Component {
     constructor(props) {
         super(props)
         RenderUsersList = RenderUsersList.bind(this);
-        this.state = {
-            users: [],
-        }
-    }
-
-    componentDidMount() {
-        axios.get('/api/users', {
-            headers: {
-                'Accept' : 'application/json',
-                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-            }
-        })
-        .then(response => {
-            console.log(response);
-            let users = response.data.users;
-            users = users.sort(function(a, b) {
-               return (a.id > b.id) ? -1 : 1;
-           });   
-            this.setState({ users: users }); 
-        })
     }
 
     render() { 
