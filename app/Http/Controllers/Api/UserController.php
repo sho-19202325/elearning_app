@@ -53,7 +53,11 @@ class UserController extends Controller
 
         $relationship = Relationship::where('follower_id', $follower->id)->where('followed_id', $followed_id)->get()[0];
 
-        return ['relationship' => $relationship];
+        $activity = $relationship->activities()->create([
+            'user_id' => $relationship->followed_id
+        ]);
+
+        return ['relationship' => $relationship, 'activity' => $activity];
     }
 
     public function unfollow(Request $request, $followed_id) {

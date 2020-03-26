@@ -64,4 +64,6 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/users/follow/{followed_id}', 'Api\UserController@follow');
 
     Route::get('/users/unfollow/{followed_id}', 'Api\UserController@unfollow');
+
+    Route::get('/activities', 'Api\ActivityController@index');
 });

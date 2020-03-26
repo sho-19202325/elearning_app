@@ -10,7 +10,7 @@ use App\Question;
 class QuestionController extends Controller
 {
     public function index() {
-        $questions = Question::orderBy('created_at', 'DESC')->get();
+        $questions = Question::all();
 
         return ['questions' => $questions];
     }

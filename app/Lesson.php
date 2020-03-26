@@ -19,4 +19,9 @@ class Lesson extends Model
     public function answers() {
         return $this->hasMany('App\Answer');
     }
+
+    public function activities()
+    {
+        return $this->morphMany('App\Activity', 'activitable');
+    }
 }
