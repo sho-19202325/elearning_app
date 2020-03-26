@@ -26,7 +26,10 @@ class Home extends Component {
             <div className={"container my-5 home-container"}>
                 <div className="row">
                     <div className="col-md-6">
-                        <UserProfile user={this.props.user} />
+                        <UserProfile 
+                            user={this.props.user}
+                            relationships={this.props.relationships} 
+                        />
                         <div className="container">
                             <div className={"card-container col-md-8 text-center"}>
                                 <h3>learned</h3>

@@ -12,28 +12,30 @@ async function createLesson(questionList_id) {
 }
 
 function LessonButton(props) {
-    const answers = props.answers.filter(answer =>
-        answer.lesson_id == props.lesson.id
-    );
-
     const questions = props.questions.filter(question =>
         question.question_list_id == props.questionList.id
     )
 
     if(props.lesson == undefined) {
         return <Button color="primary" variant="contained" onClick={(e) => this.handleSubmit(e, props.questionList.id)}>try this question</Button>;
-    } else if(answers[0] != undefined && questions[0] != undefined && answers.length == questions.length) {
-        return (
-            <Link to={"/lesson/" + props.lesson.id + "/questionList/" + props.questionList.id}>
-                <Button color="primary" variant="contained">show result</Button>
-            </Link>
-        )
     } else {
-        return (
-        <Link to={"/lesson/" + props.lesson.id + "/questionList/" + props.questionList.id}>
-            <Button color="primary" variant="contained">continue to answer</Button>
-        </Link>
-        );   
+        const answers = props.answers.filter(answer =>
+            answer.lesson_id == props.lesson.id
+        );        
+        
+        if(answers[0] != undefined && questions[0] != undefined && answers.length == questions.length) {
+            return (
+                <Link to={"/lesson/" + props.lesson.id + "/questionList/" + props.questionList.id}>
+                    <Button color="primary" variant="contained">show result</Button>
+                </Link>
+            )
+        } else {
+            return (
+            <Link to={"/lesson/" + props.lesson.id + "/questionList/" + props.questionList.id}>
+                <Button color="primary" variant="contained">continue to answer</Button>
+            </Link>
+            );   
+        }
     }
 }
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Relationship;
 
 class UserController extends Controller
 {
@@ -35,5 +36,33 @@ class UserController extends Controller
         $user = User::find($id);
 
         return ['user' => $user];
+    }
+
+    public function relationships() {
+        $relationships = Relationship::all();
+
+        return ['relationships' => $relationships];
+    }
+
+    public function follow(Request $request, $followed_id) {
+        $follower = $request->user();
+
+        if (!$follower->isFollowing($followed_id)){
+            $follower->followedUsers()->attach($followed_id);
+        }
+
+        $relationship = Relationship::where('follower_id', $follower->id)->where('followed_id', $followed_id)->get()[0];
+
+        return ['relationship' => $relationship];
+    }
+
+    public function unfollow(Request $request, $followed_id) {
+        $follower = $request->user();
+
+        $follower->followedUsers()->detach($followed_id);
+
+        $relationships = Relationship::all();
+
+        return ['relationships' => $relationships];
     }
 }

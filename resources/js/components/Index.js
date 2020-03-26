@@ -16,6 +16,8 @@ import Show from './users/Show';
 import AdminShowQuestionList from './adminQuestionLists/AdminShowQuestionList';
 import { authorizedAxios } from './../modules/Rest';
 import AnswerQuestions from './questionLists/AnswerQuestions';
+import IndexFollowers from './users/IndexFollowers';
+import IndexFollowingUsers from './users/IndexFollowingUsers';
 
 function UnLoggedInUserPage() {
     return (
@@ -50,9 +52,28 @@ function LoggedInUserPage() {
             <IndexAdminQuestionLists questionLists={this.state.questionLists} />
         </Route>                  
         <Route path="/users">
-            <IndexUsers users={this.state.users} />
+            <IndexUsers 
+                authUser={this.state.user}
+                users={this.state.users} 
+                relationships={this.state.relationships}
+                isFollow={this.isFollow}
+                follow={this.follow}
+                unfollow={this.unfollow}
+            />
         </Route>           
-        <Route path="/user/:id" render={({ match })=> <Show users={this.state.users } user_id={match.params.id}/>} />         
+        <Route exact path="/user/:id" 
+            render={({ match }) => 
+                <Show 
+                    authUser={this.state.user}
+                    users={this.state.users } 
+                    user_id={match.params.id}
+                    relationships={this.state.relationships}
+                    isFollow={this.isFollow}
+                    follow={this.follow}
+                    unfollow={this.unfollow}
+                />
+            } 
+        />         
         <Route path="/admin/questionList/:id/questions" render={({ match }) => 
             <AdminShowQuestionList 
                 questionLists={this.state.questionLists} 
@@ -60,20 +81,52 @@ function LoggedInUserPage() {
                 questions={this.state.questions} 
                 options={this.state.options}
                 />} />    
-        <Route path="/lesson/:lesson_id/questionList/:questionList_id" render={({ match }) =>
-            <AnswerQuestions 
-                user={this.state.user}
-                questionLists={this.state.questionLists}
-                questionList_id={match.params.questionList_id}
-                questions={this.state.questions}
-                options={this.state.options}
-                lessons={this.state.lessons}
-                lesson_id={match.params.lesson_id}
-                answers={this.state.answers}
-                handleChange={this.handleChange}
-                />  } />
+        <Route path="/lesson/:lesson_id/questionList/:questionList_id" 
+            render={({ match }) =>
+                <AnswerQuestions 
+                    user={this.state.user}
+                    questionLists={this.state.questionLists}
+                    questionList_id={match.params.questionList_id}
+                    questions={this.state.questions}
+                    options={this.state.options}
+                    lessons={this.state.lessons}
+                    lesson_id={match.params.lesson_id}
+                    answers={this.state.answers}
+                    handleChange={this.handleChange}
+                /> 
+            } 
+        />
+        <Route exact path="/user/:id/followers"
+            render={({ match }) => 
+                <IndexFollowers 
+                    authUser={this.state.user}
+                    users={this.state.users}
+                    user_id={match.params.id}
+                    relationships={this.state.relationships}
+                    isFollow={this.isFollow}
+                    follow={this.follow}
+                    unfollow={this.unfollow}
+                />
+            }
+        />
+        <Route exact path="/user/:id/followingUsers"
+            render={({ match }) => 
+                <IndexFollowingUsers
+                    authUser={this.state.user}
+                    users={this.state.users}
+                    user_id={match.params.id}
+                    relationships={this.state.relationships}
+                    isFollow={this.isFollow}
+                    follow={this.follow}
+                    unfollow={this.unfollow}
+                />
+            }
+        />
         <Route exact path="/">
-            <Home user={this.state.user} />;
+            <Home 
+                user={this.state.user} 
+                relationships={this.state.relationships}
+            />;
         </Route>     
     </Switch>        
 )}
@@ -95,6 +148,9 @@ function RenderMainPage() {
         LoggedInUserPage = LoggedInUserPage.bind(this);
         this.setInformation = this.setInformation.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.isFollow = this.isFollow.bind(this);
+        this.follow = this.follow.bind(this);
+        this.unfollow = this.unfollow.bind(this);
         this.state = {
             user: null,
             users: null,
@@ -103,6 +159,7 @@ function RenderMainPage() {
             options: [],
             lessons: [],
             answers: [],
+            relationships: [],
         }
     }
 
@@ -135,10 +192,36 @@ function RenderMainPage() {
 
             response = await authorizedAxios("get", '/api/answers');
             this.setState({ answers: response.data.answers });
+
+            response = await authorizedAxios("get", '/api/users/relationships');
+            this.setState({ relationships: response.data.relationships });
     }
 
     handleChange(name, value) {
         this.setState({[name]: value});
+    }
+
+    isFollow(follower_id, followed_id) {
+        const relationship = this.state.relationships.find(relationship =>
+            relationship.follower_id == follower_id && relationship.followed_id == followed_id
+        )
+
+        return relationship != undefined;
+    }
+
+    async follow(followed_id) {
+        const response = await authorizedAxios("get", '/api/users/follow/' + followed_id);
+        let relationships = this.state.relationships;
+        relationships[this.state.relationships.length] = response.data.relationship;
+        this.handleChange("relationships", relationships)
+        console.log(this.state.relationships)
+    }
+
+    async unfollow(followed_id) {
+        const data = {followed_id: followed_id}
+        const response = await authorizedAxios("get", '/api/users/unfollow/' + followed_id);
+        this.handleChange("relationships", response.data.relationships);
+        console.log(this.state.relationships)
     }
 
     render() {

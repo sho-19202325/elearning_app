@@ -58,4 +58,10 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/answers', 'Api\AnswerController@index');
 
     Route::post('/lesson/{lesson_id}/answer', 'Api\AnswerController@store');
+
+    Route::get('/users/relationships/', 'Api\UserController@relationships');
+
+    Route::get('/users/follow/{followed_id}', 'Api\UserController@follow');
+
+    Route::get('/users/unfollow/{followed_id}', 'Api\UserController@unfollow');
 });

@@ -4,6 +4,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import FlipCameraIosIcon from '@material-ui/icons/FlipCameraIos';
 import UserEdit from './users/UserEdit';
 import { authorizedAxios } from './../modules/Rest';
+import { Link } from 'react-router-dom';
 
 function ChangeAvatarButton() {
     const buttonStyle = {
@@ -81,6 +82,12 @@ class UserProfile extends Component {
     }
 
     render() { 
+        let passiveRelationships = this.props.relationships.filter(relationship =>
+            relationship.followed_id == this.props.user.id    
+        )        
+        let activeRelationships = this.props.relationships.filter(relationship =>
+            relationship.follower_id == this.props.user.id    
+        )
         return ( 
             <div className="container">
                 <div className={"card-container rounded shadow-lg col-md-8 mb-3"}>
@@ -102,8 +109,16 @@ class UserProfile extends Component {
                 />                  
                 <div className={"user-relationships p-2 text-center"}>
                     <div className="row">
-                        <div className={"col-md-6 px-auto py-5"}>0 follower</div>
-                        <div className={"col-md-6 px-auto py-5"}>0 following</div>
+                        <div className={"col-md-6 px-auto py-5"}>
+                            <Link to={"/user/" + this.props.user.id + "/followers"}>
+                                {passiveRelationships.length} follower                                
+                            </Link>
+                        </div>
+                        <div className={"col-md-6 px-auto py-5"}>
+                            <Link to={"/user/" + this.props.user.id + "/followingUsers"}>
+                                {activeRelationships.length} following                                
+                            </Link>
+                        </div>
                     </div>
                 </div>
                 </div>
