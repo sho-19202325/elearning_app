@@ -14,11 +14,14 @@ async function createQuestion(questionList_id, statement, answer) {
     const data = {statement: statement, answer: answer};
     const response = await authorizedAxios("post", '/api/questionList/' + questionList_id + '/question', data);
     console.log(response);
+    createOption(questionList_id, response.data.question.id);    
     this.handleNewQuestion(response.data.question);
-    createOption(questionList_id, response.data.question.id);
 }
 
 async function createOption(questionList_id, question_id) {
+    console.log('inside create option')
+    console.log(this.state)    
+    console.log('inside create option end')
     const data = {options:[this.state.content1, this.state.content2, this.state.content3]};
     const response = await authorizedAxios("post", '/api/question/' + question_id + '/option', data);
     this.handleNewOption(response.data.options);
@@ -29,10 +32,10 @@ async function createOption(questionList_id, question_id) {
 
 function RenderQuestions(props) {
     const questions = [];
-    if(props.showQuestions !== undefined && this.state.options[0] != undefined) {
+    if(props.showQuestions !== undefined && props.options != undefined && props.options[0] != undefined) {
         for(let i=0;i<props.showQuestions.length;i++){
             let question = props.showQuestions[i];  
-            let options = this.state.options.filter(option => option.question_id == question.id);
+            let options = props.options.filter(option => option.question_id == question.id);
             questions.push(
                 <AdmingQuestionChild 
                     key={i} 
@@ -155,11 +158,9 @@ class AdminShowQuestionList extends Component {
         createOption = createOption.bind(this);
         this.deleteQuestion = this.deleteQuestion.bind(this);
         this.handleContent = this.handleContent.bind(this);
-        this.setOptions = this.setOptions.bind(this);
         this.state = {
             newQuestions: [],
             newOptions: [],
-            options: [],
             content1: "",
             content2: "",
             content3: "",
@@ -187,15 +188,6 @@ class AdminShowQuestionList extends Component {
         authorizedAxios("delete", '/api/questionList/' + this.props.questionList_id + '/question/' + id);
     }
 
-    componentDidMount() {
-        this.setOptions();
-    }
-
-    async setOptions() {
-        const response = await authorizedAxios("get", '/api/options' );
-        this.setState({ options: response.data.options });
-    }
-
     render() {         
         if(this.props.questions !== undefined){
         const findQuestions = id => this.props.questions.filter(question => question.question_list_id == id);  
@@ -211,7 +203,7 @@ class AdminShowQuestionList extends Component {
                         <div className="p-4 col-md-3">Delete</div>
                     </div>
                     <RenderCreatedQuestions questionList_id={this.props.questionList_id} />
-                    <RenderQuestions showQuestions={showQuestions} />
+                    <RenderQuestions showQuestions={showQuestions} options={this.props.options}/>
                 </div> 
             </div>
          );} else {
