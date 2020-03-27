@@ -5,12 +5,17 @@ import { Button, TextField } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import CheckIcon from '@material-ui/icons/Check';
+import { authorizedAxios } from './../../modules/Rest';
+
+async function createQuestionList(title, description) {
+    let response = await authorizedAxios("post", '/api/questionLists', {title: title, description: description});
+    this.handleNewQuestionList(response.data.questionList);
+}
 
 function AddQuestionsList(props) { 
     const [open, setOpen] = React.useState(false);   
     const [title, setTitle] = React.useState('');
     const [description, setDescription] = React.useState('');
-
 
     const handleOpen = () => {
       setOpen(true);
@@ -31,26 +36,9 @@ function AddQuestionsList(props) {
     const handleSubmit = (e) => {
         e.preventDefault();
         createQuestionList(title, description);
-    }
-
-    const createQuestionList = (title, description) => {
-        axios.post('/api/questionLists', {title: title, description: description}, {
-            headers: {
-                'Accept' : 'application/json',
-                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-            }
-        })
-        .then (response =>  {
-            console.log(response.data);
-            setTitle('');
-            setDescription('');
-            setOpen(false);
-            this.handleNewQuestionList(response.data.questionList);
-            console.log(this.state.newQuestionLists);
-        })
-        .catch (error => {
-            console.log(error);
-        })
+        setTitle('');
+        setDescription('');
+        setOpen(false);
     }
 
     if(open) {
@@ -117,6 +105,7 @@ class IndexAdminQuestionLists extends Component {
         AddQuestionsList = AddQuestionsList.bind(this);
         RenderQuestionLists = RenderQuestionLists.bind(this);
         RenderCreatedQuestionLists = RenderCreatedQuestionLists.bind(this);
+        createQuestionList = createQuestionList.bind(this);
         this.state = {
             newQuestionLists: [],
         }

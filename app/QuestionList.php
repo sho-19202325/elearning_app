@@ -9,6 +9,10 @@ class QuestionList extends Model
     protected $guarded = ['id'];
 
     public function user() {
-        return $this.beloongsTo('App\User');
+        return $this->belongsTo('App\User');
+    }
+
+    public function questions() {
+        return $this->hasMany('App\Question');
     }
 }
