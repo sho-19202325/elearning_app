@@ -111,7 +111,7 @@ class AdminQuestionList extends Component {
                     <div className="row">
                         <div className="col-md-8">
                             <h3>{this.state.title}</h3>
-                            <p><span>[0 words]</span>{this.state.description}</p>
+                            <p><span>[{this.props.questions.length} questions]</span>{this.state.description}</p>
                         </div>  
                         <div className="col-md-4">
                             <div className="row my-3">

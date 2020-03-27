@@ -82,8 +82,6 @@ export default function DropdownMenu(props) {
           </Link>
         </StyledMenuItem>
         <StyledMenuItem>
-            <DraftsIcon fontSize="small" />
-          </ListItemIcon>
           <Link to="/">
             <ListItemText primary="MyPage" />            
           </Link>
