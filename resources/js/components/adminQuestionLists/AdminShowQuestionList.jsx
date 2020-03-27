@@ -10,20 +10,36 @@ import { Radio, FormControl, FormLabel, RadioGroup, FormControlLabel } from '@ma
 import DeleteConfirmation from './DeleteConfirmation.jsx';
 import { authorizedAxios } from './../../modules/Rest';
 
-async function createQuestion(statement, answer) {
+async function createQuestion(questionList_id, statement, answer) {
     const data = {statement: statement, answer: answer};
-    const response = await authorizedAxios("post", '/api/questionList/' + this.props.questionList_id + '/question', data);
+    const response = await authorizedAxios("post", '/api/questionList/' + questionList_id + '/question', data);
     console.log(response);
     this.handleNewQuestion(response.data.question);
+    createOption(questionList_id, response.data.question.id);
+}
+
+async function createOption(questionList_id, question_id) {
+    const data = {options:[this.state.content1, this.state.content2, this.state.content3]};
+    const response = await authorizedAxios("post", '/api/question/' + question_id + '/option', data);
+    this.handleNewOption(response.data.options);
+    if(this.props.questionList_id !== questionList_id) {
+        location.reload();
+    }
 }
 
 function RenderQuestions(props) {
     const questions = [];
-    console.log(props.showQuestions);
-    if(props.showQuestions !== undefined) {
+    if(props.showQuestions !== undefined && this.state.options[0] != undefined) {
         for(let i=0;i<props.showQuestions.length;i++){
+            let question = props.showQuestions[i];  
+            let options = this.state.options.filter(option => option.question_id == question.id);
             questions.push(
-                <AdmingQuestionChild key={i} question={props.showQuestions[i]} questionList_id={this.props.questionList_id} />              
+                <AdmingQuestionChild 
+                    key={i} 
+                    question={question} 
+                    questionList_id={this.props.questionList_id} 
+                    options={options}    
+                />              
             );
         }
     }
@@ -54,7 +70,7 @@ function AddQuestions(props) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        createQuestion(statement, answer);
+        createQuestion(props.questionList_id, statement, answer);
         setStatement('');
         setAnswer(1);
         handleClose();
@@ -73,11 +89,22 @@ function AddQuestions(props) {
                             <TextField label="Statement" onChange={e=>handleStatement(e)} className="col-md-6" autoFocus/>                            
                         </div>
                         <div className="row">
-                            <RadioGroup defaultValue="1" aria-label="gender" name="customized-radios">
-                                <FormControlLabel value="1" control={<Radio />} onClick={e => handleAnswer(e) }/>
-                                <FormControlLabel value="2" control={<Radio />} onClick={e => handleAnswer(e) }/>
-                                <FormControlLabel value="3" control={<Radio />} onClick={e => handleAnswer(e) }/>
-                            </RadioGroup>                                          
+                            <div className="col-md-1 mt-2">
+                                <FormControlLabel required checked={answer == 1} name="question-answer" value="1" control={<Radio />} onClick={e => handleAnswer(e) } />
+                            </div>
+                            <TextField label="Option" onChange={e=>this.handleContent(1, e)} className="col-md-10" />                
+                        </div>
+                        <div className="row">
+                            <div className="col-md-1 mt-2">
+                                <FormControlLabel required checked={answer == 2} name="question-answer" value="2" control={<Radio />} onClick={e => handleAnswer(e) } />
+                            </div>
+                            <TextField label="Option" onChange={e=>this.handleContent(2, e)} className="col-md-10" />                
+                        </div>
+                        <div className="row">
+                            <div className="col-md-1 mt-2">
+                                <FormControlLabel required checked={answer == 3} name="question-answer" value="3" control={<Radio />} onClick={e => handleAnswer(e) } />
+                            </div>
+                            <TextField label="Option" onChange={e=>this.handleContent(3, e)} className="col-md-10" />                
                         </div>
                         <div className="row">
                             <Button type="submit" style={{background: 'white'}} variant="contained" className="col-md-8 mx-auto">
@@ -100,12 +127,17 @@ function AddQuestions(props) {
     }
 }
 
-function RenderCreatedQuestions() {
+function RenderCreatedQuestions(props) {
     let createdQuestions = []
     for(let i=0;i < this.state.newQuestions.length;i++) {
-        if (this.state.newQuestions[i].question_list_id == this.props.questionList_id){
+        if (this.state.newQuestions[i].question_list_id == props.questionList_id && this.state.newOptions[0] != undefined){
             createdQuestions.unshift(
-                <AdmingQuestionChild key={i} question={this.state.newQuestions[i]} questionList_id={this.props.questionList_id} />  
+                <AdmingQuestionChild 
+                    key={i} 
+                    question={this.state.newQuestions[i]} 
+                    questionList_id={props.questionList_id}
+                    options={this.state.newOptions[i]}                    
+                />  
             )
         }
     }
@@ -120,30 +152,57 @@ class AdminShowQuestionList extends Component {
         AddQuestions = AddQuestions.bind(this);
         RenderCreatedQuestions = RenderCreatedQuestions.bind(this);
         createQuestion = createQuestion.bind(this);
+        createOption = createOption.bind(this);
         this.deleteQuestion = this.deleteQuestion.bind(this);
+        this.handleContent = this.handleContent.bind(this);
+        this.setOptions = this.setOptions.bind(this);
         this.state = {
             newQuestions: [],
+            newOptions: [],
+            options: [],
+            content1: "",
+            content2: "",
+            content3: "",
         }
+    }
+
+    handleContent(num, e) {
+        this.setState({["content" + num]: e.target.value});
     }
 
     handleNewQuestion(newQuestion) {
         let newQuestions = this.state.newQuestions;
         newQuestions[newQuestions.length] = newQuestion;
-        this.setState({newQuestions: newQuestions});
+
+        this.setState({ newQuestions: newQuestions });        
+    }
+
+    handleNewOption(newOption) {
+        let newOptions = this.state.newOptions;
+        newOptions[newOptions.length] = newOption;    
+        this.setState({ newOptions: newOptions });    
     }
 
     deleteQuestion(id) {
         authorizedAxios("delete", '/api/questionList/' + this.props.questionList_id + '/question/' + id);
     }
 
-    render() { 
+    componentDidMount() {
+        this.setOptions();
+    }
+
+    async setOptions() {
+        const response = await authorizedAxios("get", '/api/options' );
+        this.setState({ options: response.data.options });
+    }
+
+    render() {         
         if(this.props.questions !== undefined){
         const findQuestions = id => this.props.questions.filter(question => question.question_list_id == id);  
         const showQuestions = findQuestions(this.props.questionList_id);
-        console.log(this.state.newQuestions);
         return ( 
             <div className="container w-75">
-                <AddQuestions />                
+                <AddQuestions questionList_id={this.props.questionList_id}/>                
                 <div className="col-md-12 mt-4">
                     <div className="card-container row text-center">
                         <div className="p-4 col-md-3">statement</div>
@@ -151,7 +210,7 @@ class AdminShowQuestionList extends Component {
                         <div className="p-4 col-md-3">Edit</div>
                         <div className="p-4 col-md-3">Delete</div>
                     </div>
-                    <RenderCreatedQuestions />
+                    <RenderCreatedQuestions questionList_id={this.props.questionList_id} />
                     <RenderQuestions showQuestions={showQuestions} />
                 </div> 
             </div>

@@ -43,5 +43,11 @@ Route::group(['middleware' => 'auth:api'], function() {
 
     Route::patch('/questionList/{questionList_id}/question/{id}', 'Api\QuestionController@update');
 
-    Route::delete('/questionList/{questionList_id}/question/{id}', 'Api\QuestionController@delete');    
+    Route::delete('/questionList/{questionList_id}/question/{id}', 'Api\QuestionController@delete');   
+    
+    Route::post('/question/{question_id}/option', 'Api\OptionController@store');
+
+    Route::get('/options', 'Api\OptionController@index');
+
+    Route::patch('/question/{question_id}/options', 'Api\OptionController@update');
 });

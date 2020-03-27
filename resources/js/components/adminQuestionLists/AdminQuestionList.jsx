@@ -7,6 +7,8 @@ import { TextField, Button } from '@material-ui/core';
 import CheckIcon from '@material-ui/icons/Check';
 import DeleteConfirmation from './DeleteConfirmation';
 import { authorizedAxios } from './../../modules/Rest';
+import ListIcon from '@material-ui/icons/List';
+import { Link } from 'react-router-dom';
 
 class AdminQuestionList extends Component {
     constructor(props) {
@@ -113,13 +115,22 @@ class AdminQuestionList extends Component {
                         </div>  
                         <div className="col-md-4">
                             <div className="row my-3">
-                            <div className="col-md-4 ml-3 pr-0">
-                                <IconButton color="inherit" onClick={this.handleStartEdit}>
-                                    <EditIcon />
-                                </IconButton>                                
-                            </div>
-                            <DeleteConfirmation deleteTarget={this.props.questionList} deleteMethod={this.deleteQuestionList} confirmationContent={["title", "description"]}/>                                           
-                            </div>         
+                                <div className="col-md-3 pr-0">
+                                    <Link to={"/admin/questionList/" + this.props.questionList.id +"/questions"}>
+                                        <IconButton color="inherit">
+                                            <ListIcon />    
+                                        </IconButton>  
+                                    </Link>                              
+                                </div>                                  
+                                <div className="col-md-3 ml-3 pr-0">
+                                    <IconButton color="inherit" onClick={this.handleStartEdit}>
+                                        <EditIcon />
+                                    </IconButton>                                
+                                </div>
+                                <div className="col-md-3">
+                                    <DeleteConfirmation deleteTarget={this.props.questionList} deleteMethod={this.deleteQuestionList} confirmationContent={["title", "description"]}/>                                              
+                                </div>      
+                            </div>   
                         </div>                            
                     </div>
                 </div>
