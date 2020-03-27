@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public function index(Request $request) {
+        $authUser = $request->user();
+        $users = User::where('id', '!=', $authUser->id)->get();
+
+        return ['users' => $users];
+    }
+    
     public function store(Request $request){
         $user = User::create([
             'name' => $request->name,
