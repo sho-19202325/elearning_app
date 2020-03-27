@@ -18,6 +18,7 @@ import { authorizedAxios } from './../modules/Rest';
 import AnswerQuestions from './questionLists/AnswerQuestions';
 import IndexFollowers from './users/IndexFollowers';
 import IndexFollowingUsers from './users/IndexFollowingUsers';
+import LoadingPage from './material-ui/LoadingPage';
 
 function UnLoggedInUserPage() {
     return (
@@ -170,6 +171,7 @@ function RenderMainPage() {
             answers: [],
             relationships: [],
             activities: [],
+            isLoading: true,
         }
     }
 
@@ -208,6 +210,8 @@ function RenderMainPage() {
 
             response = await authorizedAxios("get", '/api/activities');
             this.setState({ activities: response.data.activities });
+
+            this.setState({ isLoading: false });
     }
 
     handleChange(name, value) {
@@ -256,20 +260,23 @@ function RenderMainPage() {
     }
 
     render() {
-        return (
-            <div className={ "h-100" }> 
-                <Router>
-                    <header>
-                    <Header user={this.state.user} />
-                    </header>
-                    <div className={"main-container"}>
-                        <div className={"container-fluid h-100"}>
-                            <RenderMainPage />
+        if(this.state.isLoading) {
+            return <LoadingPage />
+        } else {
+            return (
+                <div className={ "h-100" }> 
+                    <Router>
+                        <header>
+                        <Header user={this.state.user} />
+                        </header>
+                        <div className={"main-container"}>
+                            <div className={"container-fluid h-100"}>
+                                <RenderMainPage />
+                            </div>
                         </div>
-                    </div>
-                </Router> 
-            </div>
-        );
+                    </Router> 
+                </div>                
+        );}        
     }
 }
 
