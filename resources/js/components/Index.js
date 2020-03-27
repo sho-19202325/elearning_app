@@ -11,16 +11,50 @@ import Home from './Home';
 import Questions from './Questions';
 import axios from 'axios';
 import IndexAdminQuestionLists from './adminQuestionLists/IndexAdminQuestionLists';
+import IndexUsers from './users/IndexUsers';
+import Show from './users/Show';
 
-function RenderHome() {
-    if (localStorage.getItem('token') == ''){
-        return <Welcome />;
-    } else {
-        return <Home user={this.state.user}/>;
-    }
+function UnLoggedInUserPage() {
+    return (
+        <Switch>  
+            <Route path="/signup">
+                <Signup />
+            </Route>   
+            <Route path="/login">
+                <Login />
+            </Route>  
+            <Route path="/">
+                <Welcome />
+            </Route>
+        </Switch>
+    )
 }
 
+function LoggedInUserPage() {
 
+    return (
+    <Switch>
+        <Route path="/questions">
+            <Questions />
+        </Route>          
+        <Route path="/adminList">
+            <IndexAdminQuestionLists questionLists={this.state.questionLists} />
+        </Route>                  
+        <Route path="/users">
+            <IndexUsers users={this.state.users} />
+        </Route>                  
+        <Route path="/user/:id" render={({ match })=> <Show users={this.state.users } user_id={match.params.id}/>} />                 
+        <Route exact path="/">
+            <Home user={this.state.user} />;
+        </Route>     
+    </Switch>        
+)}
+
+function RenderMainPage() {
+    if(localStorage.getItem('token') == "") {
+        return <UnLoggedInUserPage />;
+    } else if (this.state.user != null && this.state.users != null) {
+        return <LoggedInUserPage />;
 
  class Index extends Component {
     constructor(props) {

@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public function show($id) {
+        $user = User::find($id);
+
+        return ['user' => $user];
+    }
+
     public function store(Request $request){
         $user = User::create([
             'name' => $request->name,
