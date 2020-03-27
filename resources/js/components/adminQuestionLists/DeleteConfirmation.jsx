@@ -23,11 +23,19 @@ class DeleteConfirmation extends Component {
     }
 
     handleDelete() {
-        this.props.deleteQuestionList(this.props.questionList.id);
+        this.props.deleteMethod(this.props.deleteTarget.id);
         this.setState({open: false});
     }
 
     render() { 
+        const target = [];
+        if(this.props.deleteTarget !== undefined) {
+            for(let i=0;i<this.props.confirmationContent.length;i++){
+                target.push(
+                    <DialogContentText key={i}>{this.props.confirmationContent[i]}: {this.props.deleteTarget[this.props.confirmationContent[i]]}</DialogContentText>
+                );
+            }
+        }
         return ( 
             <div className="col-md-4">
                 <IconButton color="inherit" onClick={this.handleOpen}>
@@ -41,10 +49,7 @@ class DeleteConfirmation extends Component {
                 >
                     <DialogTitle id="alert-dialog-title">{"Are you sure to delete this question list?"}</DialogTitle>
                     <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        title: {this.props.questionList.title}
-                        description: {this.props.questionList.description}
-                    </DialogContentText>
+                        {target}
                     </DialogContent>
                     <DialogActions>
                     <Button onClick={this.handleOpen} color="primary">

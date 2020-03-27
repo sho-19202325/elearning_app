@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public function index(Request $request) {
+        $authUser = $request->user();
+        $users = User::where('id', '!=', $authUser->id)->get();
+
+        return ['users' => $users];
+    }
+    
     public function store(Request $request){
         $user = User::create([
             'name' => $request->name,
@@ -22,5 +29,11 @@ class UserController extends Controller
         $token = $user->createToken('Laravel Password Grant Client')->accessToken;
 
         return ['token' => $token];
+    }
+
+    public function show($id) {
+        $user = User::find($id);
+
+        return ['user' => $user];
     }
 }

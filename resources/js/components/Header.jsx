@@ -86,8 +86,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function NavBarButton(props) {
-
-  if(localStorage.getItem('token') == ''){
+  if(this.props.user == null){
     return (
       <div>
         <Link to="/signup">
@@ -104,6 +103,9 @@ function NavBarButton(props) {
         <Link to="/questions">
           <Button color="inherit">Questions</Button>
         </Link>      
+        <Link to="/users">
+          <Button color="inherit">Users</Button>
+        </Link>  
         <DropdownMenu user={this.props.user} style={{ display: 'inline-block' }} />    
       </div>
     );

@@ -8,26 +8,69 @@ import Header from './Header';
 import Welcome from './Welcomepage';
 import './../../sass/welcome.scss';
 import Home from './Home';
-import Questions from './Questions';
+import IndexQuestionLists from './questionLists/IndexQuestionLists';
 import axios from 'axios';
 import IndexAdminQuestionLists from './adminQuestionLists/IndexAdminQuestionLists';
+import IndexUsers from './users/IndexUsers';
+import Show from './users/Show';
+import AdminShowQuestionList from './adminQuestionLists/AdminShowQuestionList';
+import { authorizedAxios } from './../modules/Rest';
 
-function RenderHome() {
-    if (localStorage.getItem('token') == ''){
-        return <Welcome />;
-    } else {
-        return <Home user={this.state.user}/>;
-    }
+function UnLoggedInUserPage() {
+    return (
+        <Switch>  
+            <Route path="/signup">
+                <Signup />
+            </Route>   
+            <Route path="/login">
+                <Login />
+            </Route>  
+            <Route path="/">
+                <Welcome />
+            </Route>
+        </Switch>
+    )
 }
 
+function LoggedInUserPage() {
+    return (
+    <Switch>
+        <Route path="/questions">
+            <IndexQuestionLists questions={this.state.questionLists} />
+        </Route>          
+        <Route path="/adminList">
+            <IndexAdminQuestionLists questionLists={this.state.questionLists} />
+        </Route>                  
+        <Route path="/users">
+            <IndexUsers users={this.state.users} />
+        </Route>           
+        <Route path="/user/:id" render={({ match })=> <Show users={this.state.users } user_id={match.params.id}/>} />         
+        <Route path="/questionList/:id/questions" render={({ match }) => <AdminShowQuestionList quetsionLists={this.state.questionLists} questionList_id={match.params.id} questions={this.state.questions} />} />              
+        <Route exact path="/">
+            <Home user={this.state.user} />;
+        </Route>     
+    </Switch>        
+)}
 
+function RenderMainPage() {
+    if(localStorage.getItem('token') == "") {
+        return <UnLoggedInUserPage />;
+    } else if (this.state.user != null && this.state.users != null) {
+        return <LoggedInUserPage />;
+    } else {
+        return <div></div>;
+    }
+}
 
  class Index extends Component {
     constructor(props) {
         super(props)
-        RenderHome = RenderHome.bind(this);
+        RenderMainPage = RenderMainPage.bind(this);
+        LoggedInUserPage = LoggedInUserPage.bind(this);
+        this.setInformation = this.setInformation.bind(this);
         this.state = {
-            user: {},
+            user: null,
+            users: null,
             questionLists: [],
         }
     }
@@ -35,72 +78,37 @@ function RenderHome() {
     componentDidMount() {
         // get user data from laravel api and set it to state
         if(localStorage.getItem('token')){
-            axios.get('api/user', {
-                headers: {
-                    'Accept' : 'application/json',
-                    'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                }
-            })
-            .then(response => {
-                console.log(response.data);
-                this.setState({user: response.data});
-            })
-            .catch(error => {
-                console.log(error);
-            }) 
-
-            axios.get('api/questionLists', {
-                headers: {
-                    'Accept' : 'application/json',
-                    'Authorization' : 'Bearer ' + localStorage.getItem('token'),
-                }
-            })
-            .then(response => {
-                console.log(response.data.questionLists);
-                let questionLists = response.data.questionLists;
-                questionLists = questionLists.sort(function(a, b) {
-                   return (a.id > b.id) ? -1 : 1;
-               });   
-                this.setState({ questionLists: questionLists });           
-            })
-            .catch(error => {
-                console.log(error);
-            })            
+            this.setInformation();       
         }
+    }    
+
+    async setInformation() {
+            let response = await authorizedAxios("get", '/api/user/');
+            this.setState({ user: response.data});
+
+            response = await authorizedAxios("get", '/api/questionLists');
+            this.setState({ questionLists: response.data.questionLists});
+
+            response = await authorizedAxios("get", '/api/users/');
+            this.setState({ users: response.data.users });
+
+            response = await authorizedAxios("get", '/api/questionList/questions');
+            this.setState({ questions: response.data.questions });         
     }
 
-
-
     render() {
-        
         return (
             <div className={ "h-100" }> 
-              <Router>
-                <header>
-                  <Header user={this.state.user} />
-                </header>
-                <div className={"main-container"}>
-                    <div className={"container-fluid h-100"}>
-                        <Switch>  
-                            <Route path="/signup">
-                                <Signup />
-                            </Route>   
-                            <Route path="/login">
-                                <Login />
-                            </Route>   
-                            <Route path="/questions">
-                                <Questions />
-                            </Route>          
-                            <Route path="/adminList">
-                                <IndexAdminQuestionLists questionLists={this.state.questionLists} />
-                            </Route>                  
-                            <Route path="/">
-                                <RenderHome />
-                            </Route>     
-                        </Switch>
+                <Router>
+                    <header>
+                    <Header user={this.state.user} />
+                    </header>
+                    <div className={"main-container"}>
+                        <div className={"container-fluid h-100"}>
+                            <RenderMainPage />
+                        </div>
                     </div>
-                </div>
-              </Router> 
+                </Router> 
             </div>
         );
     }
