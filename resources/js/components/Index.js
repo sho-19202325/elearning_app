@@ -15,6 +15,7 @@ import IndexUsers from './users/IndexUsers';
 import Show from './users/Show';
 import AdminShowQuestionList from './adminQuestionLists/AdminShowQuestionList';
 import { authorizedAxios } from './../modules/Rest';
+import AnswerQuestions from './questionLists/AnswerQuestions';
 
 function UnLoggedInUserPage() {
     return (
@@ -36,7 +37,14 @@ function LoggedInUserPage() {
     return (
     <Switch>
         <Route path="/questions">
-            <IndexQuestionLists questions={this.state.questionLists} />
+            <IndexQuestionLists 
+                handleChange={this.handleChange}
+                user={this.state.user}
+                questionLists={this.state.questionLists}
+                questions={this.state.questions} 
+                lessons={this.state.lessons}
+                answers={this.state.answers}
+            />
         </Route>          
         <Route path="/adminList">
             <IndexAdminQuestionLists questionLists={this.state.questionLists} />
@@ -45,7 +53,25 @@ function LoggedInUserPage() {
             <IndexUsers users={this.state.users} />
         </Route>           
         <Route path="/user/:id" render={({ match })=> <Show users={this.state.users } user_id={match.params.id}/>} />         
-        <Route path="/admin/questionList/:id/questions" render={({ match }) => <AdminShowQuestionList quetsionLists={this.state.questionLists} questionList_id={match.params.id} questions={this.state.questions} />} />              
+        <Route path="/admin/questionList/:id/questions" render={({ match }) => 
+            <AdminShowQuestionList 
+                questionLists={this.state.questionLists} 
+                questionList_id={match.params.id} 
+                questions={this.state.questions} 
+                options={this.state.options}
+                />} />    
+        <Route path="/lesson/:lesson_id/questionList/:questionList_id" render={({ match }) =>
+            <AnswerQuestions 
+                user={this.state.user}
+                questionLists={this.state.questionLists}
+                questionList_id={match.params.questionList_id}
+                questions={this.state.questions}
+                options={this.state.options}
+                lessons={this.state.lessons}
+                lesson_id={match.params.lesson_id}
+                answers={this.state.answers}
+                handleChange={this.handleChange}
+                />  } />
         <Route exact path="/">
             <Home user={this.state.user} />;
         </Route>     
@@ -68,16 +94,21 @@ function RenderMainPage() {
         RenderMainPage = RenderMainPage.bind(this);
         LoggedInUserPage = LoggedInUserPage.bind(this);
         this.setInformation = this.setInformation.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.state = {
             user: null,
             users: null,
             questionLists: [],
             questions: [],
+            options: [],
+            lessons: [],
+            answers: [],
         }
     }
 
+    
+
     componentDidMount() {
-        // get user data from laravel api and set it to state
         if(localStorage.getItem('token')){
             this.setInformation();       
         }
@@ -95,6 +126,19 @@ function RenderMainPage() {
 
             response = await authorizedAxios("get", '/api/questionList/questions');
             this.setState({ questions: response.data.questions }); 
+
+            response = await authorizedAxios("get", '/api/options' );
+            this.setState({ options: response.data.options });  
+
+            response = await authorizedAxios("get", '/api/lessons');
+            this.setState({ lessons: response.data.lessons });
+
+            response = await authorizedAxios("get", '/api/answers');
+            this.setState({ answers: response.data.answers });
+    }
+
+    handleChange(name, value) {
+        this.setState({[name]: value});
     }
 
     render() {
