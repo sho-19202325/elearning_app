@@ -54,6 +54,7 @@ function LoggedInUserPage() {
             <IndexAdminQuestionLists 
                 questionLists={this.state.questionLists} 
                 questions={this.state.questions}    
+                createName={this.createName}
             />
         </Route>                  
         <Route path="/users">
@@ -79,7 +80,6 @@ function LoggedInUserPage() {
                     isFollow={this.isFollow}
                     follow={this.follow}
                     unfollow={this.unfollow}
-
                 />
             } 
         />         
@@ -89,6 +89,7 @@ function LoggedInUserPage() {
                 questionList_id={match.params.id} 
                 questions={this.state.questions} 
                 options={this.state.options}
+                createQuestion={this.createQuestion}
                 />} />    
         <Route path="/lesson/:lesson_id/questionList/:questionList_id" 
             render={({ match }) =>
@@ -164,6 +165,8 @@ function RenderMainPage() {
         this.isFollow = this.isFollow.bind(this);
         this.follow = this.follow.bind(this);
         this.unfollow = this.unfollow.bind(this);
+        this.createName = this.createName.bind(this);
+        this.createQuestion = this.createQuestion.bind(this);
         this.state = {
             user: null,
             users: null,
@@ -263,6 +266,23 @@ function RenderMainPage() {
         return lessons;
     }
 
+    async createName(name, url, data) {
+        let response = await authorizedAxios("post", url, data);
+        this.setState({ [name]: response.data });
+    }
+
+    async createQuestion(url, data) {
+        let response = await authorizedAxios("post", url, data);
+        console.log('create method')
+        console.log(response.data);
+        console.log('end')
+        this.setState({ questions: response.data.questions, options: response.data.options })
+        console.log('after set state')
+        console.log(this.state.questions)
+        console.log(this.state.options)
+        console.log('after end')
+    }
+
     render() {
         if(this.state.isLoading) {
             return <LoadingPage completed={this.state.completed}/>;
@@ -271,7 +291,7 @@ function RenderMainPage() {
                 <div className={ "h-100" }> 
                     <Router>
                         <header>
-                        <Header user={this.state.user} />
+                            <Header user={this.state.user} />
                         </header>
                         <div className={"main-container"}>
                             <div className={"container-fluid h-100"}>

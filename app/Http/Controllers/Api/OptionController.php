@@ -9,19 +9,6 @@ use App\Option;
 
 class OptionController extends Controller
 {
-    public function store(Request $request, $question_id) {
-        $question = Question::find($question_id);
-
-        foreach($request->options as $option)
-            $question->options()->create([
-            "content" => $option,
-        ]);
-
-        $options = $question->options;
-
-        return ['options' => $options];
-    }
-
     public function index() {
         $options = Option::all();
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\QuestionList;
 use App\Question;
+use App\Option;
 
 class QuestionController extends Controller
 {
@@ -23,7 +24,15 @@ class QuestionController extends Controller
             "answer" => $request->answer
         ]);
 
-        return ['question' => $question];
+        foreach($request->options as $option)
+            $question->options()->create([
+            "content" => $option,
+        ]);
+
+        $questions = Question::all();
+        $options = Option::all();
+
+        return ['questions' => $questions, 'options' => $options];
     }
 
     public function update(Request $request, $questionList_id, $id) {

@@ -10,26 +10,6 @@ import { Radio, FormControl, FormLabel, RadioGroup, FormControlLabel } from '@ma
 import DeleteConfirmation from './DeleteConfirmation.jsx';
 import { authorizedAxios } from './../../modules/Rest';
 
-async function createQuestion(questionList_id, statement, answer) {
-    const data = {statement: statement, answer: answer};
-    const response = await authorizedAxios("post", '/api/questionList/' + questionList_id + '/question', data);
-    console.log(response);
-    createOption(questionList_id, response.data.question.id);    
-    this.handleNewQuestion(response.data.question);
-}
-
-async function createOption(questionList_id, question_id) {
-    console.log('inside create option')
-    console.log(this.state)    
-    console.log('inside create option end')
-    const data = {options:[this.state.content1, this.state.content2, this.state.content3]};
-    const response = await authorizedAxios("post", '/api/question/' + question_id + '/option', data);
-    this.handleNewOption(response.data.options);
-    if(this.props.questionList_id !== questionList_id) {
-        location.reload();
-    }
-}
-
 function RenderQuestions(props) {
     const questions = [];
     if(props.showQuestions !== undefined && props.options != undefined && props.options[0] != undefined) {
@@ -73,7 +53,8 @@ function AddQuestions(props) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        createQuestion(props.questionList_id, statement, answer);
+        const data = { statement: statement, answer: answer, options: props.options }
+        props.createQuestion('/api/questionList/' + props.questionList_id + '/question', data);
         setStatement('');
         setAnswer(1);
         handleClose();
@@ -95,19 +76,19 @@ function AddQuestions(props) {
                             <div className="col-md-1 mt-2">
                                 <FormControlLabel required checked={answer == 1} name="question-answer" value="1" control={<Radio />} onClick={e => handleAnswer(e) } />
                             </div>
-                            <TextField label="Option" onChange={e=>this.handleContent(1, e)} className="col-md-10" />                
+                            <TextField label="Option" onChange={e=>props.handleContent(1, e)} className="col-md-10" />                
                         </div>
                         <div className="row">
                             <div className="col-md-1 mt-2">
                                 <FormControlLabel required checked={answer == 2} name="question-answer" value="2" control={<Radio />} onClick={e => handleAnswer(e) } />
                             </div>
-                            <TextField label="Option" onChange={e=>this.handleContent(2, e)} className="col-md-10" />                
+                            <TextField label="Option" onChange={e=>props.handleContent(2, e)} className="col-md-10" />                
                         </div>
                         <div className="row">
                             <div className="col-md-1 mt-2">
                                 <FormControlLabel required checked={answer == 3} name="question-answer" value="3" control={<Radio />} onClick={e => handleAnswer(e) } />
                             </div>
-                            <TextField label="Option" onChange={e=>this.handleContent(3, e)} className="col-md-10" />                
+                            <TextField label="Option" onChange={e=>props.handleContent(3, e)} className="col-md-10" />                
                         </div>
                         <div className="row">
                             <Button type="submit" style={{background: 'white'}} variant="contained" className="col-md-8 mx-auto">
@@ -130,37 +111,13 @@ function AddQuestions(props) {
     }
 }
 
-function RenderCreatedQuestions(props) {
-    let createdQuestions = []
-    for(let i=0;i < this.state.newQuestions.length;i++) {
-        if (this.state.newQuestions[i].question_list_id == props.questionList_id && this.state.newOptions[0] != undefined){
-            createdQuestions.unshift(
-                <AdmingQuestionChild 
-                    key={i} 
-                    question={this.state.newQuestions[i]} 
-                    questionList_id={props.questionList_id}
-                    options={this.state.newOptions[i]}                    
-                />  
-            )
-        }
-    }
-
-    return <div>{createdQuestions}</div>;
-}
-
 class AdminShowQuestionList extends Component {
     constructor(props) {
         super(props)
-        RenderQuestions = RenderQuestions.bind(this);
         AddQuestions = AddQuestions.bind(this);
-        RenderCreatedQuestions = RenderCreatedQuestions.bind(this);
-        createQuestion = createQuestion.bind(this);
-        createOption = createOption.bind(this);
         this.deleteQuestion = this.deleteQuestion.bind(this);
         this.handleContent = this.handleContent.bind(this);
         this.state = {
-            newQuestions: [],
-            newOptions: [],
             content1: "",
             content2: "",
             content3: "",
@@ -171,43 +128,54 @@ class AdminShowQuestionList extends Component {
         this.setState({["content" + num]: e.target.value});
     }
 
-    handleNewQuestion(newQuestion) {
-        let newQuestions = this.state.newQuestions;
-        newQuestions[newQuestions.length] = newQuestion;
-
-        this.setState({ newQuestions: newQuestions });        
-    }
-
-    handleNewOption(newOption) {
-        let newOptions = this.state.newOptions;
-        newOptions[newOptions.length] = newOption;    
-        this.setState({ newOptions: newOptions });    
-    }
-
     deleteQuestion(id) {
         authorizedAxios("delete", '/api/questionList/' + this.props.questionList_id + '/question/' + id);
     }
 
-    render() {         
+    render() {       
         if(this.props.questions !== undefined){
-        const findQuestions = id => this.props.questions.filter(question => question.question_list_id == id);  
-        const showQuestions = findQuestions(this.props.questionList_id);
-        return ( 
-            <div className="container w-75">
-                <AddQuestions questionList_id={this.props.questionList_id}/>                
-                <div className="col-md-12 mt-4">
-                    <div className="card-container row text-center">
-                        <div className="p-4 col-md-3">statement</div>
-                        <div className="p-4 col-md-3">answer</div>
-                        <div className="p-4 col-md-3">Edit</div>
-                        <div className="p-4 col-md-3">Delete</div>
-                    </div>
-                    <RenderCreatedQuestions questionList_id={this.props.questionList_id} />
-                    <RenderQuestions showQuestions={showQuestions} options={this.props.options}/>
-                </div> 
-            </div>
-         );} else {
-             return <div></div>;
+            const findQuestions = id => this.props.questions.filter(question => question.question_list_id == id);  
+            const showQuestions = findQuestions(this.props.questionList_id);
+            let questions = [];
+            for(let i=0;i<showQuestions.length;i++){
+                let question = showQuestions[i];  
+                let options = this.props.options.filter(option => option.question_id == question.id);
+                questions.push(
+                    <AdmingQuestionChild 
+                        key={i}
+                        question={question} 
+                        questionList_id={this.props.questionList_id} 
+                        options={options}    
+                    />              
+                );
+            }
+
+            console.log('start')
+            console.log(this.props.questions);
+            console.log(questions)
+            console.log('end')
+
+            return ( 
+                <div className="container w-75">
+                    <AddQuestions 
+                        questionList_id={this.props.questionList_id}
+                        options={[this.state.content1, this.state.content2, this.state.content3]}
+                        handleContent={this.handleContent}
+                        createQuestion={this.props.createQuestion}
+                    />                
+                    <div className="col-md-12 mt-4">
+                        <div className="card-container row text-center">
+                            <div className="p-4 col-md-3">statement</div>
+                            <div className="p-4 col-md-3">answer</div>
+                            <div className="p-4 col-md-3">Edit</div>
+                            <div className="p-4 col-md-3">Delete</div>
+                        </div>
+                        {questions}
+                    </div> 
+                </div>
+            );
+        } else {
+            return <div></div>;
          }
     }
 }

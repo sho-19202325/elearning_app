@@ -21,7 +21,9 @@ class QuestionListController extends Controller
             'description' => $request->description
         ]);
 
-        return ['questionList' => $questionList];
+        $questionLists = QuestionList::all();
+
+        return $questionLists;
     }
 
     public function update(Request $request, $id) {

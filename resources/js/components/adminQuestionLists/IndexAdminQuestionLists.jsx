@@ -7,11 +7,6 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import CheckIcon from '@material-ui/icons/Check';
 import { authorizedAxios } from './../../modules/Rest';
 
-async function createQuestionList(title, description) {
-    let response = await authorizedAxios("post", '/api/questionLists', {title: title, description: description});
-    this.handleNewQuestionList(response.data.questionList);
-}
-
 function AddQuestionsList(props) { 
     const [open, setOpen] = React.useState(false);   
     const [title, setTitle] = React.useState('');
@@ -35,7 +30,8 @@ function AddQuestionsList(props) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        createQuestionList(title, description);
+        const data = { title: title, description: description }
+        props.createName("questionLists", '/api/questionLists', data);
         setTitle('');
         setDescription('');
         setOpen(false);
@@ -75,48 +71,10 @@ function AddQuestionsList(props) {
     }
 }
 
-function RenderQuestionLists(props) {
-    const questionLists = [];
-    if(this.props.questionLists[0] !== undefined) {
-        for(let i=0;i<this.props.questionLists.length;i++){
-            const questions = this.props.questions.filter(question =>
-                question.question_list_id == this.props.questionLists[i].id
-            )
-            questionLists.push(
-                <li key={i}>
-                    <AdminQuestionList 
-                        questionList={this.props.questionLists[i]} 
-                        questions={questions}
-                    />
-                </li>                
-            );
-        }
-    }
-
-    return <div>{questionLists}</div>;
-}
-
-function RenderCreatedQuestionLists() {
-    let createdQuestionLists = []
-    for(let i=0;i < this.state.newQuestionLists.length;i++) {
-        createdQuestionLists.unshift(
-            <li key={i}><AdminQuestionList questionList={this.state.newQuestionLists[i]} /></li>
-        )
-    }
-
-    return <div>{createdQuestionLists}</div>;
-}
-
 class IndexAdminQuestionLists extends Component {
     constructor(props){
         super(props)
         AddQuestionsList = AddQuestionsList.bind(this);
-        RenderQuestionLists = RenderQuestionLists.bind(this);
-        RenderCreatedQuestionLists = RenderCreatedQuestionLists.bind(this);
-        createQuestionList = createQuestionList.bind(this);
-        this.state = {
-            newQuestionLists: [],
-        }
     }
 
     handleNewQuestionList(newQuestionList) {
@@ -126,13 +84,29 @@ class IndexAdminQuestionLists extends Component {
     }
 
     render() { 
+        const questionLists = [];
+        if(this.props.questionLists[0] !== undefined) {
+            for(let i=0;i<this.props.questionLists.length;i++){
+                const questions = this.props.questions.filter(question =>
+                    question.question_list_id == this.props.questionLists[i].id
+                )
+                questionLists.push(
+                    <li key={i}>
+                        <AdminQuestionList 
+                            questionList={this.props.questionLists[i]} 
+                            questions={questions}
+                        />
+                    </li>                
+                );
+            }
+        }
+
         return ( 
             <div className="container my-5">
                 <div className="row">
                     <ul className="col-md-10 mx-auto">
-                        <AddQuestionsList handleNewQuestionList={this.handleNewQuestionList} />
-                        <RenderCreatedQuestionLists />
-                        <RenderQuestionLists />
+                        <AddQuestionsList createName={this.props.createName} />
+                        {questionLists}
                     </ul> 
                 </div>
             </div>
