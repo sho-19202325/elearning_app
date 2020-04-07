@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
-import Axios from 'axios';
 import UsersListChild from './UsersListChild';
 
-function RenderUsersList() {
+function RenderUsersList(props) {
     let usersList = [];
-    if(this.props.users[0] !== undefined) {
-        for(let i=0;i<this.props.users.length;i++){
+    if(props.users[0] !== undefined) {
+        for(let i=0;i<props.users.length;i++){
             usersList.push(
-                <li key={i}><UsersListChild user={this.props.users[i]} /></li>                
+                <li key={i}>
+                    <UsersListChild 
+                        authUser={props.authUser}
+                        user={props.users[i]}
+                        isFollow={props.isFollow} 
+                        follow={props.follow}
+                        unfollow={props.unfollow}
+                    />
+                </li>                
             );
         }
     }
@@ -26,11 +33,17 @@ class IndexUsers extends Component {
             <div className="container my-5">
                 <div className="row">
                     <ul className="col-md-8 mx-auto">
-                        <RenderUsersList />
+                        <RenderUsersList 
+                            authUser={this.props.authUser}
+                            users={this.props.users}
+                            isFollow={this.props.isFollow} 
+                            follow={this.props.follow}
+                            unfollow={this.props.unfollow}
+                        />
                     </ul> 
                 </div>
             </div>
-         );
+        );
     }
 }
  
