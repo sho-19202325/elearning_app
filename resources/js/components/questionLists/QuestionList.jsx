@@ -8,6 +8,9 @@ async function createLesson(questionList_id) {
     let lessons = this.props.lessons;
     lessons[lessons.length] = response.data.lesson;
     this.props.handleChange("lessons", lessons);
+    let activities = this.props.activities;
+    activities[activities.length] = response.data.activity;
+    this.props.handleChange("activities", activities)
     this.props.history.push('/lesson/' + response.data.lesson.id + '/questionList/' + questionList_id);    
 }
 
@@ -22,7 +25,7 @@ function LessonButton(props) {
         const answers = props.answers.filter(answer =>
             answer.lesson_id == props.lesson.id
         );        
-        
+
         if(answers[0] != undefined && questions[0] != undefined && answers.length == questions.length) {
             return (
                 <Link to={"/lesson/" + props.lesson.id + "/questionList/" + props.questionList.id}>

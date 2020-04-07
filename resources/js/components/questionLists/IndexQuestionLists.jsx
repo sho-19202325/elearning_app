@@ -13,6 +13,7 @@ class IndexQuestionLists extends Component {
                     lessons={this.props.lessons}
                     answers={this.props.answers}
                     handleChange={this.props.handleChange}
+                    activities={this.props.activities}
                 />                
             </div>
         );     

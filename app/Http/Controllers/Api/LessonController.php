@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Lesson;
 
 class LessonController extends Controller
 {
     public function index(Request $request) {
-        $lessons = $request->user()->lessons;
+        $lessons = Lesson::all();
 
         return ['lessons' => $lessons];
     }
@@ -20,6 +21,10 @@ class LessonController extends Controller
             'question_list_id' => $request->questionList_id,
         ]);
 
-        return ['lesson' => $lesson];
+        $activity = $lesson->activities()->create([
+            'user_id' => $lesson->user_id
+        ]);
+
+        return ['lesson' => $lesson, 'activity' => $activity];
     }
 }

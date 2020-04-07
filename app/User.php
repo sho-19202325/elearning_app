@@ -56,4 +56,8 @@ class User extends Authenticatable
     public function isFollowing($followed_id) {
         return $this->followedUsers()->where('followed_id', $followed_id)->exists();
     }
+
+    public function activities() {
+        return $this->hasMany('App\Activiy');
+    }
 }

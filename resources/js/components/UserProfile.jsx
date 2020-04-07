@@ -39,9 +39,9 @@ class UserProfile extends Component {
         this.sendFile = this.sendFile.bind(this);
         ChangeAvatarButton = ChangeAvatarButton.bind(this);     
         this.state = {
-            name: this.props.user.name,
-            email: this.props.user.email,
-            avatar: this.props.user.avatar,
+            name: this.props.authUser.name,
+            email: this.props.authUser.email,
+            avatar: this.props.authUser.avatar,
             isEditing: false,
         }
     }
@@ -83,10 +83,10 @@ class UserProfile extends Component {
 
     render() { 
         let passiveRelationships = this.props.relationships.filter(relationship =>
-            relationship.followed_id == this.props.user.id    
+            relationship.followed_id == this.props.authUser.id    
         )        
         let activeRelationships = this.props.relationships.filter(relationship =>
-            relationship.follower_id == this.props.user.id    
+            relationship.follower_id == this.props.authUser.id    
         )
         return ( 
             <div className="container">
@@ -110,12 +110,12 @@ class UserProfile extends Component {
                 <div className={"user-relationships p-2 text-center"}>
                     <div className="row">
                         <div className={"col-md-6 px-auto py-5"}>
-                            <Link to={"/user/" + this.props.user.id + "/followers"}>
+                            <Link to={"/user/" + this.props.authUser.id + "/followers"}>
                                 {passiveRelationships.length} follower                                
                             </Link>
                         </div>
                         <div className={"col-md-6 px-auto py-5"}>
-                            <Link to={"/user/" + this.props.user.id + "/followingUsers"}>
+                            <Link to={"/user/" + this.props.authUser.id + "/followingUsers"}>
                                 {activeRelationships.length} following                                
                             </Link>
                         </div>

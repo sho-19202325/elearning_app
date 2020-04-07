@@ -46,6 +46,7 @@ function LoggedInUserPage() {
                 questions={this.state.questions} 
                 lessons={this.state.lessons}
                 answers={this.state.answers}
+                activities={this.state.activities}
             />
         </Route>          
         <Route path="/adminList">
@@ -68,9 +69,13 @@ function LoggedInUserPage() {
                     users={this.state.users } 
                     user_id={match.params.id}
                     relationships={this.state.relationships}
+                    questionLists={this.state.questionLists}
+                    lessons={this.findLessons(match.params.id)}
+                    activities={this.findActivity(match.params.id)}
                     isFollow={this.isFollow}
                     follow={this.follow}
                     unfollow={this.unfollow}
+
                 />
             } 
         />         
@@ -124,8 +129,12 @@ function LoggedInUserPage() {
         />
         <Route exact path="/">
             <Home 
-                user={this.state.user} 
+                authUser={this.state.user} 
+                users={this.state.users}                
                 relationships={this.state.relationships}
+                activities={this.findActivity(this.state.user.id)}
+                lessons={this.findLessons(this.state.user.id)}
+                questionLists={this.state.questionLists}   
             />;
         </Route>     
     </Switch>        
@@ -160,6 +169,7 @@ function RenderMainPage() {
             lessons: [],
             answers: [],
             relationships: [],
+            activities: [],
         }
     }
 
@@ -195,6 +205,9 @@ function RenderMainPage() {
 
             response = await authorizedAxios("get", '/api/users/relationships');
             this.setState({ relationships: response.data.relationships });
+
+            response = await authorizedAxios("get", '/api/activities');
+            this.setState({ activities: response.data.activities });
     }
 
     handleChange(name, value) {
@@ -213,8 +226,10 @@ function RenderMainPage() {
         const response = await authorizedAxios("get", '/api/users/follow/' + followed_id);
         let relationships = this.state.relationships;
         relationships[this.state.relationships.length] = response.data.relationship;
-        this.handleChange("relationships", relationships)
-        console.log(this.state.relationships)
+        this.handleChange("relationships", relationships);
+        let activities = this.state.activities;
+        activities[this.state.activities.length] = response.data.activity;
+        this.handleChange("activities", activities);
     }
 
     async unfollow(followed_id) {
@@ -222,6 +237,22 @@ function RenderMainPage() {
         const response = await authorizedAxios("get", '/api/users/unfollow/' + followed_id);
         this.handleChange("relationships", response.data.relationships);
         console.log(this.state.relationships)
+    }
+
+    findActivity(user_id) {
+        let activities = this.state.activities.filter(activity =>
+            activity.user_id == user_id
+        );
+
+        return activities;
+    }
+
+    findLessons(user_id) {
+        let lessons = this.state.lessons.filter(lesson =>
+            lesson.user_id == user_id    
+        )
+
+        return lessons;
     }
 
     render() {
