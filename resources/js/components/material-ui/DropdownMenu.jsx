@@ -3,7 +3,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
@@ -83,10 +82,9 @@ export default function DropdownMenu(props) {
           </Link>
         </StyledMenuItem>
         <StyledMenuItem>
-          <ListItemIcon>
-            <DraftsIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary="Drafts" />
+          <Link to="/">
+            <ListItemText primary="MyPage" />            
+          </Link>
         </StyledMenuItem>
         <StyledMenuItem>
           <Button color="inherit" onClick={logout}>Logout</Button> 

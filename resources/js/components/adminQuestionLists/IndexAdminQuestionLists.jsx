@@ -79,8 +79,16 @@ function RenderQuestionLists(props) {
     const questionLists = [];
     if(this.props.questionLists[0] !== undefined) {
         for(let i=0;i<this.props.questionLists.length;i++){
+            const questions = this.props.questions.filter(question =>
+                question.question_list_id == this.props.questionLists[i].id
+            )
             questionLists.push(
-                <li key={i}><AdminQuestionList questionList={this.props.questionLists[i]} /></li>                
+                <li key={i}>
+                    <AdminQuestionList 
+                        questionList={this.props.questionLists[i]} 
+                        questions={questions}
+                    />
+                </li>                
             );
         }
     }

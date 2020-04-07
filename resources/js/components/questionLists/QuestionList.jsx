@@ -59,11 +59,14 @@ class QuestionList extends Component {
         const lesson = this.props.lessons.find(lesson => 
             lesson.user_id == this.props.user.id && lesson.question_list_id == this.props.questionList.id
         );
+        const questions = this.props.questions.filter(question =>
+            question.question_list_id == this.props.questionList.id
+        )
 
         return ( 
             <div className="card-container m-1 p-2 rounded shadow-lg text-center">
                 <h3>{this.props.questionList.title}</h3>
-                <p><span>[1 words]</span>{this.props.questionList.description}</p>
+                <p><span>[{questions.length} questions]</span>{this.props.questionList.description}</p>
                 <LessonButton 
                     lesson={lesson}
                     answers={this.props.answers}

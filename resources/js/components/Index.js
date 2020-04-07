@@ -18,6 +18,7 @@ import { authorizedAxios } from './../modules/Rest';
 import AnswerQuestions from './questionLists/AnswerQuestions';
 import IndexFollowers from './users/IndexFollowers';
 import IndexFollowingUsers from './users/IndexFollowingUsers';
+import LoadingPage from './material-ui/LoadingPage';
 
 function UnLoggedInUserPage() {
     return (
@@ -50,7 +51,10 @@ function LoggedInUserPage() {
             />
         </Route>          
         <Route path="/adminList">
-            <IndexAdminQuestionLists questionLists={this.state.questionLists} />
+            <IndexAdminQuestionLists 
+                questionLists={this.state.questionLists} 
+                questions={this.state.questions}    
+            />
         </Route>                  
         <Route path="/users">
             <IndexUsers 
@@ -170,6 +174,8 @@ function RenderMainPage() {
             answers: [],
             relationships: [],
             activities: [],
+            isLoading: true,
+            completed: 0,
         }
     }
 
@@ -183,31 +189,33 @@ function RenderMainPage() {
 
     async setInformation() {
             let response = await authorizedAxios("get", '/api/user/');
-            this.setState({ user: response.data});
+            this.setState({ user: response.data, completed: 20});
 
             response = await authorizedAxios("get", '/api/questionLists');
-            this.setState({ questionLists: response.data.questionLists});
+            this.setState({ questionLists: response.data.questionLists, completed: 25});
 
             response = await authorizedAxios("get", '/api/users/');
-            this.setState({ users: response.data.users });
+            this.setState({ users: response.data.users, completed: 30});
 
             response = await authorizedAxios("get", '/api/questionList/questions');
-            this.setState({ questions: response.data.questions }); 
+            this.setState({ questions: response.data.questions, completed: 35}); 
 
             response = await authorizedAxios("get", '/api/options' );
-            this.setState({ options: response.data.options });  
+            this.setState({ options: response.data.options, completed: 40});  
 
             response = await authorizedAxios("get", '/api/lessons');
-            this.setState({ lessons: response.data.lessons });
+            this.setState({ lessons: response.data.lessons, completed: 50});
 
             response = await authorizedAxios("get", '/api/answers');
-            this.setState({ answers: response.data.answers });
+            this.setState({ answers: response.data.answers, completed: 60});
 
             response = await authorizedAxios("get", '/api/users/relationships');
-            this.setState({ relationships: response.data.relationships });
+            this.setState({ relationships: response.data.relationships, completed: 99});
 
             response = await authorizedAxios("get", '/api/activities');
-            this.setState({ activities: response.data.activities });
+            this.setState({ activities: response.data.activities});
+
+            this.setState({ isLoading: false});
     }
 
     handleChange(name, value) {
@@ -256,20 +264,24 @@ function RenderMainPage() {
     }
 
     render() {
-        return (
-            <div className={ "h-100" }> 
-                <Router>
-                    <header>
-                    <Header user={this.state.user} />
-                    </header>
-                    <div className={"main-container"}>
-                        <div className={"container-fluid h-100"}>
-                            <RenderMainPage />
+        if(this.state.isLoading) {
+            return <LoadingPage completed={this.state.completed}/>;
+        } else {
+            return (
+                <div className={ "h-100" }> 
+                    <Router>
+                        <header>
+                        <Header user={this.state.user} />
+                        </header>
+                        <div className={"main-container"}>
+                            <div className={"container-fluid h-100"}>
+                                <RenderMainPage />
+                            </div>
                         </div>
-                    </div>
-                </Router> 
-            </div>
-        );
+                    </Router> 
+                </div>
+            );            
+        } 
     }
 }
 
