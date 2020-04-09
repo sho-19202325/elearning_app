@@ -1,18 +1,17 @@
 import axios from 'axios';
 
 export async function authorizedAxios(method, url, data="") {
-    const api_url = "https://elearning-shota1.herokuapp.com/" + url
     switch(method) {
         case "get":
-            return await getAxios(api_url);
+            return await getAxios(url);
             break;
         case "post":
-            return await postAxios(api_url, data);
+            return await postAxios(url, data);
             break;
         case "patch":
-            return await patchAxios(api_url, data);
+            return await patchAxios(url, data);
         case "delete":
-            return await deleteAxios(api_url);
+            return await deleteAxios(url);
             break;
         default:
             console.log('error')
